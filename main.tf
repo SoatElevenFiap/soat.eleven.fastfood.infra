@@ -36,10 +36,11 @@ module "vnet" {
   location           = azurerm_resource_group.rg-postech.location
 
   # Configuração de rede
-  address_space              = var.vnet_address_space
-  app_subnet_prefixes        = var.app_subnet_prefixes
-  db_subnet_prefixes         = var.db_subnet_prefixes
-  gateway_subnet_prefixes    = var.gateway_subnet_prefixes
+  address_space                 = var.vnet_address_space
+  app_subnet_prefixes           = var.app_subnet_prefixes
+  db_subnet_prefixes            = var.db_subnet_prefixes
+  app_gateway_subnet_prefixes   = var.app_gateway_subnet_prefixes
+  gateway_subnet_prefixes       = var.gateway_subnet_prefixes
   
   # Features opcionais
   create_gateway_subnet       = var.create_gateway_subnet
@@ -91,7 +92,7 @@ module "gateway" {
   gateway_name        = var.app_gateway_name
   resource_group_name = azurerm_resource_group.rg-postech.name
   location           = azurerm_resource_group.rg-postech.location
-  gateway_subnet_id  = module.vnet.gateway_subnet_id
+  gateway_subnet_id  = module.vnet.app_gateway_subnet_id
 
   # Configuração econômica
   sku_name  = var.app_gateway_sku_name
@@ -119,7 +120,7 @@ module "database" {
   # Configuração obrigatória
   server_name             = var.postgresql_server_name
   resource_group_name     = azurerm_resource_group.rg-postech.name
-  location               = azurerm_resource_group.rg-postech.location
+  location               = "West Europe"  # PostgreSQL não disponível em East US para conta de estudante
 
   # Configuração econômica
   postgresql_version = var.postgresql_version

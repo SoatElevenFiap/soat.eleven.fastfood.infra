@@ -112,8 +112,14 @@ variable "db_subnet_prefixes" {
   }
 }
 
+variable "app_gateway_subnet_prefixes" {
+  description = "Prefixos de endereço para subnet do Application Gateway"
+  type        = list(string)
+  default     = ["10.0.3.0/24"]
+}
+
 variable "gateway_subnet_prefixes" {
-  description = "Prefixos de endereço para Gateway Subnet"
+  description = "Prefixos de endereço para Gateway Subnet (VPN/ExpressRoute)"
   type        = list(string)
   default     = ["10.0.255.0/27"]
 }

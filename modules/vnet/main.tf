@@ -40,7 +40,15 @@ resource "azurerm_subnet" "db_subnet" {
   service_endpoints    = ["Microsoft.Sql", "Microsoft.Storage"]
 }
 
-# Gateway Subnet (opcional)
+# Application Gateway Subnet
+resource "azurerm_subnet" "app_gateway_subnet" {
+  name                 = "${var.vnet_name}-appgw-subnet"
+  resource_group_name  = var.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = var.app_gateway_subnet_prefixes
+}
+
+# Gateway Subnet (para VPN/ExpressRoute - opcional)
 resource "azurerm_subnet" "gateway_subnet" {
   count                = var.create_gateway_subnet ? 1 : 0
   name                 = "GatewaySubnet"  # Nome fixo requerido pelo Azure

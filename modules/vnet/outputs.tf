@@ -50,6 +50,11 @@ output "gateway_subnet_id" {
   value       = var.create_gateway_subnet ? azurerm_subnet.gateway_subnet[0].id : null
 }
 
+output "app_gateway_subnet_id" {
+  description = "ID da subnet do Application Gateway"
+  value       = azurerm_subnet.app_gateway_subnet.id
+}
+
 output "gateway_subnet_name" {
   description = "Nome da Gateway Subnet (se criada)"
   value       = var.create_gateway_subnet ? azurerm_subnet.gateway_subnet[0].name : null
