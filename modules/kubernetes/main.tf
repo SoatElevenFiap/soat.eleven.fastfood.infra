@@ -20,13 +20,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
     type = "SystemAssigned"
   }
 
-  # Network profile simples usando kubenet (mais barato)
-  network_profile {
-    network_plugin = "kubenet"
-    pod_cidr      = "10.244.0.0/16"
-    service_cidr  = "10.0.0.0/16"
-    dns_service_ip = "10.0.0.10"
-  }
+# Network profile simples usando kubenet (mais barato)
+network_profile {
+  network_plugin = "kubenet"
+  pod_cidr       = "10.244.0.0/16" 
+  service_cidr   = "10.240.0.0/16"
+  dns_service_ip = "10.240.0.10"
+}
 
   tags = var.tags
 }

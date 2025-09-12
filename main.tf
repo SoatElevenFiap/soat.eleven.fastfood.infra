@@ -120,7 +120,7 @@ module "database" {
   # Configuração obrigatória
   server_name             = var.postgresql_server_name
   resource_group_name     = azurerm_resource_group.rg-postech.name
-  location               = "West Europe"  # PostgreSQL não disponível em East US para conta de estudante
+  location               = "West Central US"  # PostgreSQL não disponível em East US para conta de estudante
 
   # Configuração econômica
   postgresql_version = var.postgresql_version
