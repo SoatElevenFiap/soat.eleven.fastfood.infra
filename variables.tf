@@ -184,6 +184,26 @@ variable "aks_vm_size" {
   }
 }
 
+variable "aks_kubernetes_version" {
+  description = "Versão do Kubernetes"
+  type        = string
+  default     = "1.28.3"
+}
+
+variable "aks_network_plugin" {
+  description = "Plugin de rede do AKS"
+  type        = string
+  default     = "kubenet"
+  
+  validation {
+    condition = contains([
+      "kubenet",
+      "azure"
+    ], var.aks_network_plugin)
+    error_message = "Plugin de rede deve ser kubenet ou azure."
+  }
+}
+
 # =================
 # Application Gateway Variables (Configuração Simples e Econômica)
 # =================
@@ -243,18 +263,6 @@ variable "postgresql_server_name" {
   description = "Nome do servidor PostgreSQL"
   type        = string
   default     = "psql-fastfood-postech"
-}
-
-variable "postgresql_admin_login" {
-  description = "Login do administrador do PostgreSQL"
-  type        = string
-  default     = "fastfoodadmin"
-}
-
-variable "postgresql_admin_password" {
-  description = "Senha do administrador do PostgreSQL"
-  type        = string
-  sensitive   = true
 }
 
 variable "postgresql_version" {

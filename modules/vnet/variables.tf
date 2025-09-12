@@ -26,14 +26,14 @@ variable "location" {
 
   validation {
     condition = contains([
-      "West US 3",
-      "East US",
-      "Central US",
-      "South Central US",
-      "North Central US",
-      "Brazil South",
-      "West Europe",
-      "North Europe"
+      "West US 3", "westus3",
+      "East US", "eastus",
+      "Central US", "centralus",
+      "South Central US", "southcentralus",
+      "North Central US", "northcentralus",
+      "Brazil South", "brazilsouth",
+      "West Europe", "westeurope",
+      "North Europe", "northeurope"
     ], var.location)
     error_message = "A localização deve ser uma região válida do Azure."
   }

@@ -1,7 +1,7 @@
 # Create a resource group
 resource "azurerm_resource_group" "rg-postech" {
   name     = var.fiap_base_rg_name
-  location = "Central US"
+  location = var.location
 
   tags = {
     Environment = "dev"
@@ -125,8 +125,6 @@ module "database" {
   server_name             = var.postgresql_server_name
   resource_group_name     = azurerm_resource_group.rg-postech.name
   location               = azurerm_resource_group.rg-postech.location
-  administrator_login     = var.postgresql_admin_login
-  administrator_password  = var.postgresql_admin_password
 
   # Configuração econômica
   postgresql_version = var.postgresql_version

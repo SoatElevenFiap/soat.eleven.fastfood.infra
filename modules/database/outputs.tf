@@ -21,7 +21,7 @@ output "database_name" {
 
 output "connection_string" {
   description = "String de conexão do PostgreSQL"
-  value       = "Host=${azurerm_postgresql_flexible_server.main.fqdn};Database=${azurerm_postgresql_flexible_server_database.main.name};Username=${azurerm_postgresql_flexible_server.main.administrator_login};Password=${var.administrator_password}"
+  value       = "Host=${azurerm_postgresql_flexible_server.main.fqdn};Database=${azurerm_postgresql_flexible_server_database.main.name};Username=adm;Password=adm123"
   sensitive   = true
 }
 

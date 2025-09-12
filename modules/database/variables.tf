@@ -19,26 +19,7 @@ variable "location" {
   type        = string
 }
 
-variable "administrator_login" {
-  description = "Login do administrador do PostgreSQL"
-  type        = string
-  
-  validation {
-    condition     = can(regex("^[a-zA-Z][a-zA-Z0-9_]{0,62}$", var.administrator_login))
-    error_message = "O login deve começar com uma letra e ter até 63 caracteres."
-  }
-}
 
-variable "administrator_password" {
-  description = "Senha do administrador do PostgreSQL"
-  type        = string
-  sensitive   = true
-  
-  validation {
-    condition     = length(var.administrator_password) >= 8
-    error_message = "A senha deve ter pelo menos 8 caracteres."
-  }
-}
 
 # Optional variables with defaults (configuração econômica)
 variable "postgresql_version" {

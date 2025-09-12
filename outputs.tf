@@ -158,8 +158,8 @@ output "postgresql_server_fqdn" {
 }
 
 output "postgresql_databases" {
-  description = "Lista de bancos de dados criados"
-  value       = module.database.databases
+  description = "Nome do banco de dados criado"
+  value       = module.database.database_name
 }
 
 output "postgresql_connection_string" {
@@ -199,7 +199,7 @@ output "infrastructure_summary" {
     database = {
       server_name = module.database.server_name
       server_fqdn = module.database.server_fqdn
-      databases   = module.database.databases
+      databases   = module.database.database_name
     }
   }
 }
