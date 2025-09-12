@@ -23,26 +23,25 @@ variable "gateway_subnet_id" {
 variable "sku_name" {
   description = "Nome do SKU (econômico)"
   type        = string
-  default     = "Standard_Small"
+  default     = "Standard_v2"
   
   validation {
     condition = contains([
-      "Standard_Small",
-      "Standard_Medium", 
-      "Standard_v2"
+      "Standard_v2",
+      "WAF_v2"
     ], var.sku_name)
-    error_message = "Use um SKU econômico: Standard_Small, Standard_Medium ou Standard_v2."
+    error_message = "Use um SKU suportado: Standard_v2 ou WAF_v2 (v1 foi descontinuado)."
   }
 }
 
 variable "sku_tier" {
   description = "Tier do SKU"
   type        = string
-  default     = "Standard"
+  default     = "Standard_v2"
   
   validation {
-    condition     = contains(["Standard", "Standard_v2"], var.sku_tier)
-    error_message = "Tier deve ser Standard ou Standard_v2."
+    condition     = contains(["Standard_v2", "WAF_v2"], var.sku_tier)
+    error_message = "Tier deve ser Standard_v2 ou WAF_v2 (v1 foi descontinuado)."
   }
 }
 
