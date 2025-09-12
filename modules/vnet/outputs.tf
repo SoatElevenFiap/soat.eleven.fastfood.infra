@@ -50,41 +50,42 @@ output "gateway_subnet_id" {
   value       = var.create_gateway_subnet ? azurerm_subnet.gateway_subnet[0].id : null
 }
 
-output "app_nsg_id" {
-  description = "ID do Network Security Group da subnet de aplicações"
-  value       = azurerm_network_security_group.app_nsg.id
+output "gateway_subnet_name" {
+  description = "Nome da Gateway Subnet (se criada)"
+  value       = var.create_gateway_subnet ? azurerm_subnet.gateway_subnet[0].name : null
 }
 
-output "app_nsg_name" {
-  description = "Nome do Network Security Group da subnet de aplicações"
-  value       = azurerm_network_security_group.app_nsg.name
+output "gateway_subnet_address_prefixes" {
+  description = "Prefixos de endereço da Gateway Subnet (se criada)"
+  value       = var.create_gateway_subnet ? azurerm_subnet.gateway_subnet[0].address_prefixes : null
+}
+
+# NSGs simplificados
+output "app_nsg_id" {
+  description = "ID do NSG da app (removido para simplificação)"
+  value       = null
 }
 
 output "db_nsg_id" {
-  description = "ID do Network Security Group da subnet de banco"
+  description = "ID do NSG do banco de dados"
   value       = azurerm_network_security_group.db_nsg.id
 }
 
-output "db_nsg_name" {
-  description = "Nome do Network Security Group da subnet de banco"
-  value       = azurerm_network_security_group.db_nsg.name
-}
-
-# Output estruturado para uso em outros módulos
+# Outputs estruturados para compatibilidade
 output "vnet_info" {
   description = "Informações completas da VNet"
   value = {
     id            = azurerm_virtual_network.vnet.id
     name          = azurerm_virtual_network.vnet.name
-    address_space = azurerm_virtual_network.vnet.address_space
     location      = azurerm_virtual_network.vnet.location
+    address_space = azurerm_virtual_network.vnet.address_space
     
     subnets = {
       app = {
         id               = azurerm_subnet.app_subnet.id
         name             = azurerm_subnet.app_subnet.name
         address_prefixes = azurerm_subnet.app_subnet.address_prefixes
-        nsg_id          = azurerm_network_security_group.app_nsg.id
+        nsg_id          = null  # NSG removido
       }
       
       db = {

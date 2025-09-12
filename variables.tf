@@ -130,17 +130,6 @@ variable "enable_container_delegation" {
   default     = true
 }
 
-variable "admin_source_address_prefix" {
-  description = "Prefixo de endereço de origem para acesso administrativo (SSH)"
-  type        = string
-  default     = "*"
-
-  validation {
-    condition = can(cidrhost(var.admin_source_address_prefix, 0)) || var.admin_source_address_prefix == "*"
-    error_message = "Deve ser um CIDR válido ou '*' para qualquer origem."
-  }
-}
-
 # =================
 # AKS Variables (Configuração Simples e Econômica)
 # =================

@@ -1,13 +1,9 @@
 # Create a resource group
 resource "azurerm_resource_group" "rg-postech" {
-  name     = var.fiap_base_rg_name
+  name     = var.resource_group_name
   location = var.location
 
-  tags = {
-    Environment = "dev"
-    Project     = "FastFood-System"
-    CreatedBy   = "Terraform"
-  }
+  tags = var.tags
 }
 
 resource "azurerm_storage_account" "tfstate" {
@@ -48,7 +44,6 @@ module "vnet" {
   # Features opcionais
   create_gateway_subnet       = var.create_gateway_subnet
   enable_container_delegation = var.enable_container_delegation
-  admin_source_address_prefix = var.admin_source_address_prefix
 
   # Tags
   tags = merge(var.tags, {
