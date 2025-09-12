@@ -140,3 +140,168 @@ variable "admin_source_address_prefix" {
     error_message = "Deve ser um CIDR válido ou '*' para qualquer origem."
   }
 }
+
+# =================
+# AKS Variables (Configuração Simples e Econômica)
+# =================
+variable "aks_cluster_name" {
+  description = "Nome do cluster AKS"
+  type        = string
+  default     = "aks-fastfood-postech"
+}
+
+variable "aks_dns_prefix" {
+  description = "Prefixo DNS para o cluster AKS"
+  type        = string
+  default     = "fastfood-postech"
+}
+
+variable "aks_node_count" {
+  description = "Número de nós no cluster AKS"
+  type        = number
+  default     = 1
+  
+  validation {
+    condition     = var.aks_node_count >= 1 && var.aks_node_count <= 5
+    error_message = "O número de nós deve estar entre 1 e 5 para economia."
+  }
+}
+
+variable "aks_vm_size" {
+  description = "Tamanho da VM para os nós AKS (econômico)"
+  type        = string
+  default     = "Standard_B2s"
+  
+  validation {
+    condition = contains([
+      "Standard_B1s",
+      "Standard_B2s", 
+      "Standard_B1ms",
+      "Standard_B2ms",
+      "Standard_DS2_v2"
+    ], var.aks_vm_size)
+    error_message = "Use um tamanho de VM econômico (série B ou DS2_v2)."
+  }
+}
+
+# =================
+# Application Gateway Variables (Configuração Simples e Econômica)
+# =================
+variable "app_gateway_name" {
+  description = "Nome do Application Gateway"
+  type        = string
+  default     = "agw-fastfood-postech"
+}
+
+variable "app_gateway_sku_name" {
+  description = "Nome do SKU do Application Gateway (econômico)"
+  type        = string
+  default     = "Standard_Small"
+  
+  validation {
+    condition = contains([
+      "Standard_Small",
+      "Standard_Medium", 
+      "Standard_v2"
+    ], var.app_gateway_sku_name)
+    error_message = "Use um SKU econômico: Standard_Small, Standard_Medium ou Standard_v2."
+  }
+}
+
+variable "app_gateway_sku_tier" {
+  description = "Tier do SKU do Application Gateway"
+  type        = string
+  default     = "Standard"
+  
+  validation {
+    condition     = contains(["Standard", "Standard_v2"], var.app_gateway_sku_tier)
+    error_message = "Tier deve ser Standard ou Standard_v2."
+  }
+}
+
+variable "app_gateway_capacity" {
+  description = "Capacidade do Application Gateway"
+  type        = number
+  default     = 1
+  
+  validation {
+    condition     = var.app_gateway_capacity >= 1 && var.app_gateway_capacity <= 3
+    error_message = "Capacidade deve estar entre 1 e 3 para economia."
+  }
+}
+
+variable "app_gateway_backend_ips" {
+  description = "Lista de IPs do backend para o Application Gateway"
+  type        = list(string)
+  default     = []
+}
+
+# =================
+# PostgreSQL Variables (Configuração Simples e Econômica)
+# =================
+variable "postgresql_server_name" {
+  description = "Nome do servidor PostgreSQL"
+  type        = string
+  default     = "psql-fastfood-postech"
+}
+
+variable "postgresql_admin_login" {
+  description = "Login do administrador do PostgreSQL"
+  type        = string
+  default     = "fastfoodadmin"
+}
+
+variable "postgresql_admin_password" {
+  description = "Senha do administrador do PostgreSQL"
+  type        = string
+  sensitive   = true
+}
+
+variable "postgresql_version" {
+  description = "Versão do PostgreSQL"
+  type        = string
+  default     = "14"
+}
+
+variable "postgresql_sku_name" {
+  description = "Nome do SKU do PostgreSQL (econômico)"
+  type        = string
+  default     = "B_Standard_B1ms"
+  
+  validation {
+    condition = contains([
+      "B_Standard_B1ms",
+      "B_Standard_B2s", 
+      "GP_Standard_D2s_v3"
+    ], var.postgresql_sku_name)
+    error_message = "Use um SKU econômico (Basic B1ms, B2s ou GP D2s_v3)."
+  }
+}
+
+variable "postgresql_storage_mb" {
+  description = "Armazenamento do PostgreSQL em MB"
+  type        = number
+  default     = 32768  # 32GB
+  
+  validation {
+    condition     = var.postgresql_storage_mb >= 32768 && var.postgresql_storage_mb <= 65536
+    error_message = "O armazenamento deve estar entre 32GB e 64GB para economia."
+  }
+}
+
+variable "postgresql_backup_retention_days" {
+  description = "Dias de retenção de backup do PostgreSQL"
+  type        = number
+  default     = 7
+  
+  validation {
+    condition     = var.postgresql_backup_retention_days >= 7 && var.postgresql_backup_retention_days <= 14
+    error_message = "A retenção de backup deve estar entre 7 e 14 dias para economia."
+  }
+}
+
+variable "postgresql_database_name" {
+  description = "Nome do banco de dados principal"
+  type        = string
+  default     = "fastfood"
+}
