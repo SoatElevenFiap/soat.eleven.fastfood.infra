@@ -1,15 +1,16 @@
-# FastFood Infrastructure - Pós-Graduação em Arquitetura de Software
+# FastFood Database Infrastructure - PostgreSQL Gerenciado
 
-Este repositório contém os arquivos de Infrastructure as Code (IaC) utilizados para provisionar e gerenciar a infraestrutura do projeto FastFood, desenvolvido como parte da pós-graduação em Arquitetura de Software.
+Este repositório contém os arquivos de Infrastructure as Code (IaC) utilizados para provisionar **apenas o banco de dados PostgreSQL** do projeto FastFood, desenvolvido como parte da pós-graduação em Arquitetura de Software.
 
 ## 📋 Sobre o Projeto
 
-O projeto FastFood é uma aplicação desenvolvida para demonstrar conceitos de arquitetura de software, incluindo:
-- Microserviços
-- Clean Architecture
-- Domain Driven Design (DDD)
-- Infraestrutura como Código (IaC)
-- DevOps e CI/CD
+O projeto FastFood é uma aplicação desenvolvida para demonstrar conceitos de arquitetura de software. Este repositório específico é responsável **exclusivamente pela criação e gerenciamento do banco de dados PostgreSQL gerenciado**.
+
+### Características deste repositório:
+- 🗄️ **PostgreSQL Flexible Server** no Azure
+- 🏗️ **Infrastructure as Code** com Terraform
+- 💰 **Configuração econômica** para ambiente de estudos
+- 🔒 **Configuração de segurança** adequada para desenvolvimento
 
 ## 🏗️ O que é Terraform?
 
@@ -33,66 +34,111 @@ O **Terraform** é uma ferramenta de Infrastructure as Code (IaC) desenvolvida p
 
 ### Pré-requisitos
 - [Terraform](https://www.terraform.io/downloads.html) instalado
-- Credenciais configuradas para o provedor de nuvem escolhido
+- Credenciais do Azure configuradas (`az login`)
+- **Resource Group** e **VNet** já existentes no Azure
 - Git para controle de versão
+
+### Configuração
+1. Clone este repositório:
+```bash
+git clone <url-do-repositorio>
+cd infra.db
+```
+
+2. Configure as variáveis no arquivo `terraform.tfvars`:
+```hcl
+resource_group_name = "seu-resource-group-existente"
+vnet_name          = "sua-vnet-existente"
+postgresql_server_name = "psql-fastfood-postech-001"
+```
 
 ### Comandos básicos
 ```bash
 # Inicializar o Terraform
 terraform init
 
-# Planejar as mudanças
+# Planejar as mudanças (verificar o que será criado)
 terraform plan
 
-# Aplicar as mudanças
+# Aplicar as mudanças (criar o PostgreSQL)
 terraform apply
 
-# Destruir a infraestrutura
+# Destruir a infraestrutura (remover o PostgreSQL)
 terraform destroy
 ```
 
 ## 📁 Estrutura do Projeto
 
 ```
-├── modules/           # Módulos reutilizáveis do Terraform
-├── environments/      # Configurações por ambiente (dev, staging, prod)
-├── variables.tf       # Declaração de variáveis
-├── outputs.tf         # Outputs da infraestrutura
-├── main.tf           # Configuração principal
-└── terraform.tfvars.example  # Exemplo de variáveis
+├── modules/
+│   └── database/      # Módulo do PostgreSQL Flexible Server
+│       ├── main.tf    # Recursos do PostgreSQL
+│       ├── variables.tf # Variáveis do módulo
+│       └── outputs.tf # Outputs do módulo
+├── main.tf           # Configuração principal (apenas PostgreSQL)
+├── variables.tf      # Declaração de variáveis
+├── outputs.tf        # Outputs da infraestrutura
+├── terraform.tfvars  # Valores das variáveis
+└── provider.tf       # Configuração do provider Azure
 ```
 
-## 🌐 Infraestrutura Provisionada
+## 🗄️ Infraestrutura Provisionada
 
-Este repositório provisiona os seguintes recursos:
-- [ ] Compute instances (EC2, VM, etc.)
-- [ ] Load Balancers
-- [ ] Databases (RDS, SQL Database, etc.)
-- [ ] Networking (VPC, Subnets, Security Groups)
-- [ ] Storage (S3, Blob Storage, etc.)
-- [ ] Monitoring e Logging
+Este repositório provisiona **APENAS**:
+
+### ✅ PostgreSQL Flexible Server
+- **Versão**: PostgreSQL 14
+- **SKU**: B_Standard_B1ms (configuração econômica)
+- **Storage**: 32GB
+- **Backup**: 7 dias de retenção
+- **Database**: `fastfood`
+- **Admin User**: `adm`
+
+### 📋 Pré-requisitos Externos (devem existir)
+- **Resource Group**: Deve estar criado previamente
+- **Virtual Network**: Deve estar criada previamente
+
+### 🔗 Outputs Disponíveis
+- `postgresql_server_fqdn` - FQDN do servidor PostgreSQL
+- `postgresql_database_name` - Nome do banco de dados
+- `postgresql_connection_string` - String de conexão (sensível)
+- `database_summary` - Resumo completo da configuração
 
 ## 📚 Referências e Documentação
 
 ### Terraform
 - [Documentação Oficial do Terraform](https://www.terraform.io/docs)
-- [Terraform Registry](https://registry.terraform.io/) - Módulos e providers
-- [Terraform Best Practices](https://www.terraform.io/docs/cloud/guides/recommended-practices/index.html)
-- [Terraform CLI Commands](https://www.terraform.io/docs/cli/commands/index.html)
+- [Azure Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+- [PostgreSQL Flexible Server](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server)
 
-### Infrastructure as Code
-- [Infrastructure as Code: Dynamic Systems for the Cloud Age](https://www.oreilly.com/library/view/infrastructure-as-code/9781491924334/)
-- [Terraform: Up & Running](https://www.terraformupandrunning.com/)
+### Azure Database for PostgreSQL
+- [Azure PostgreSQL Documentation](https://docs.microsoft.com/azure/postgresql/)
+- [PostgreSQL Flexible Server](https://docs.microsoft.com/azure/postgresql/flexible-server/)
+- [Connection Security](https://docs.microsoft.com/azure/postgresql/flexible-server/concepts-networking)
 
-### Arquitetura de Software
-- [Clean Architecture - Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Domain Driven Design - Eric Evans](https://domainlanguage.com/ddd/)
-- [Microservices Patterns - Chris Richardson](https://microservices.io/)
+### PostgreSQL
+- [PostgreSQL Official Documentation](https://www.postgresql.org/docs/)
+- [PostgreSQL Tutorial](https://www.postgresqltutorial.com/)
 
-### Provedores de Nuvem
-- [AWS Documentation](https://docs.aws.amazon.com/)
-- [Azure Documentation](https://docs.microsoft.com/azure/)
-- [Google Cloud Documentation](https://cloud.google.com/docs)
+## 🔐 Configuração de Segurança
+
+### Credenciais Padrão
+- **Usuário**: `adm`
+- **Senha**: `adm123`
+
+> ⚠️ **Atenção**: Esta é uma configuração para ambiente de desenvolvimento/estudos. Em produção, use credenciais seguras e gerencie-as adequadamente.
+
+### Conectividade
+- O PostgreSQL será criado sem restrições de firewall para facilitar o desenvolvimento
+- Em produção, configure adequadamente as regras de firewall
+
+## 💰 Custos
+
+Esta configuração foi otimizada para **menor custo possível**:
+- SKU Básico (B_Standard_B1ms)
+- Armazenamento mínimo (32GB)
+- Backup mínimo (7 dias)
+- Sem redundância geográfica
 
 ## 🤝 Contribuição
 
@@ -112,4 +158,4 @@ Desenvolvido pelos alunos da pós-graduação em Arquitetura de Software - FIAP.
 
 ---
 
-**Nota**: Este repositório faz parte do projeto acadêmico FastFood para demonstração de conceitos de arquitetura de software e infraestrutura como código.
+**Nota**: Este repositório é focado **exclusivamente na criação do banco de dados PostgreSQL** para o projeto acadêmico FastFood. Para outros componentes da infraestrutura (AKS, Application Gateway, VNet), consulte os repositórios específicos do projeto.
