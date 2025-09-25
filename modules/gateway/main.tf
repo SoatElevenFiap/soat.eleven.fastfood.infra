@@ -37,6 +37,7 @@ resource "azurerm_application_gateway" "main" {
     public_ip_address_id = azurerm_public_ip.app_gateway.id
   }
 
+  //BACKEND
   backend_address_pool {
     name         = "backend-pool"
     ip_addresses = var.backend_ip_addresses
@@ -65,6 +66,36 @@ resource "azurerm_application_gateway" "main" {
     backend_address_pool_name  = "backend-pool"
     backend_http_settings_name = "backend-http-settings"
     priority                   = 100
+  }
+
+  //AUTH FUNCTION
+  backend_address_pool {
+    name      = "auth-function-backend-pool"
+    fqdns     = [var.function_app_hostname]
+  }
+  
+  backend_http_settings {
+    name                  = "auth-function-http-settings"
+    port                  = 443
+    path                  = "/"
+    protocol              = "Https"
+    pick_host_name_from_backend_address = true
+    cookie_based_affinity = "Disabled"
+  }
+  http_listener {
+    name                           = "auth-function-listener"
+    frontend_ip_configuration_name = "frontend-ip-config"
+    frontend_port_name             = "frontend-port-80"
+    protocol                       = "Http"
+    host_name                      = var.function_app_hostname
+  }
+  request_routing_rule {
+    name                       = "auth-function-routing-rule"
+    rule_type                  = "Basic"
+    http_listener_name         = "auth-function-listener"
+    backend_address_pool_name  = "auth-function-backend-pool"
+    backend_http_settings_name = "auth-function-http-settings"
+    priority                   = 200
   }
 
   tags = var.tags

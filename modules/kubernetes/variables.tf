@@ -39,7 +39,7 @@ variable "node_count" {
 variable "vm_size" {
   description = "Tamanho da VM para os nós (econômico)"
   type        = string
-  default     = "Standard_B2s"
+  default     = "Standard_D2s_v3"
   
   validation {
     condition = contains([
@@ -47,7 +47,8 @@ variable "vm_size" {
       "Standard_B2s", 
       "Standard_B1ms",
       "Standard_B2ms",
-      "Standard_DS2_v2"
+      "Standard_D2ps_v6",
+      "Standard_D2s_v3"
     ], var.vm_size)
     error_message = "Use um tamanho de VM econômico (série B ou DS2_v2)."
   }

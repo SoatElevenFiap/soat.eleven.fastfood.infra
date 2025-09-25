@@ -180,10 +180,10 @@ output "infrastructure_summary" {
       location = azurerm_resource_group.rg-postech.location
     }
     networking = {
-      vnet_name       = module.vnet.vnet_name
-      vnet_id         = module.vnet.vnet_id
-      app_subnet_id   = module.vnet.app_subnet_id
-      db_subnet_id    = module.vnet.db_subnet_id
+      vnet_name         = module.vnet.vnet_name
+      vnet_id           = module.vnet.vnet_id
+      app_subnet_id     = module.vnet.app_subnet_id
+      db_subnet_id      = module.vnet.db_subnet_id
       gateway_subnet_id = module.vnet.gateway_subnet_id
     }
     kubernetes = {
@@ -192,9 +192,9 @@ output "infrastructure_summary" {
       node_rg      = module.kubernetes.node_resource_group
     }
     gateway = {
-      name       = module.gateway.gateway_name
-      public_ip  = module.gateway.public_ip_address
-      fqdn       = module.gateway.gateway_fqdn
+      name      = module.gateway.gateway_name
+      public_ip = module.gateway.public_ip_address
+      fqdn      = module.gateway.gateway_fqdn
     }
     database = {
       server_name = module.database.server_name

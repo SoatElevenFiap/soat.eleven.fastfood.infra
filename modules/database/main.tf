@@ -18,6 +18,10 @@ resource "azurerm_postgresql_flexible_server" "main" {
   geo_redundant_backup_enabled = false  # Desabilitado para economia
   
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [ zone, high_availability ]
+  }
 }
 
 # PostgreSQL Database
