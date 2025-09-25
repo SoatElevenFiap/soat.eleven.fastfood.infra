@@ -166,7 +166,7 @@ variable "aks_node_count" {
 variable "aks_vm_size" {
   description = "Tamanho da VM para os nós AKS (econômico)"
   type        = string
-  default     = "Standard_D2s_v3"
+  default     = "Standard_E2s_v3"
 
   validation {
     condition = contains([
@@ -175,7 +175,7 @@ variable "aks_vm_size" {
       "Standard_B1ms",
       "Standard_B2ms",
       "Standard_D2ps_v6",
-      "Standard_D2s_v3"
+      "Standard_E2s_v3"
     ], var.aks_vm_size)
     error_message = "Use um tamanho de VM econômico (série B ou DS2_v2)."
   }

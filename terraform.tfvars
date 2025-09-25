@@ -27,7 +27,7 @@ app_gateway_subnet_prefixes = ["10.0.3.0/24"] # Subnet dedicada para Application
 # =================
 aks_cluster_name       = "aks-fastfood-postech"
 aks_node_count         = 1                 # Mínimo para economia
-aks_vm_size            = "Standard_D2s_v3" # SKU mais econômico
+aks_vm_size            = "Standard_E2s_v3" # SKU mais econômico
 aks_kubernetes_version = "1.28.3"          # Versão estável
 aks_network_plugin     = "kubenet"         # Plugin de rede mais simples
 
