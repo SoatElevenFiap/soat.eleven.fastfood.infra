@@ -31,3 +31,11 @@ resource "azurerm_postgresql_flexible_server_database" "main" {
   collation = "en_US.utf8"
   charset   = "UTF8"
 }
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "rule-allow-service-azure" {
+  name             = "rule-allow-service-azure-fw"
+  
+  server_id        = azurerm_postgresql_flexible_server.main.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
