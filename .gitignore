@@ -62,4 +62,4 @@ ehthumbs.db
 
 # Ignore lock files (uncomment if you want to ignore them)
 # .terraform.lock.hcl
-.github/workflows/federated.json
+.terraform.lock.hcl
