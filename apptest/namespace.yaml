@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: postech
+  labels:
+    name: postech
+    environment: development
+    project: fastfood-system
+    created-by: testuser
+  annotations:
+    description: "Namespace para aplicações do projeto FastFood System - POSTECH"

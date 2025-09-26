@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dotnet-helloworld-service
+  namespace: postech
+  labels:
+    app: dotnet-helloworld
+spec:
+  type: ClusterIP  # Mudança para ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: dotnet-helloworld
