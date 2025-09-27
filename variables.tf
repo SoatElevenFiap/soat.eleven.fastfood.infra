@@ -24,7 +24,8 @@ variable "location" {
       "North Central US",
       "Brazil South",
       "West Europe",
-      "North Europe"
+      "North Europe",
+      "Canada Central"
     ], var.location)
     error_message = "A localização deve ser uma região válida do Azure."
   }
