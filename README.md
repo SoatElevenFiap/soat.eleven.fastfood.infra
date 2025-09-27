@@ -34,6 +34,7 @@ O **Terraform** é uma ferramenta de Infrastructure as Code (IaC) desenvolvida p
 ### Pré-requisitos
 - [Terraform](https://www.terraform.io/downloads.html) instalado
 - Credenciais configuradas para o provedor de nuvem escolhido
+  - **Exemplo para Azure:** veja o guia de configuração OIDC para GitHub Actions em [`docs/github-actions-azure-oidc.md`](docs/github-actions-azure-oidc.md)
 - Git para controle de versão
 
 ### Comandos básicos
@@ -50,6 +51,7 @@ terraform apply
 # Destruir a infraestrutura
 terraform destroy
 ```
+**Mais detalhes para execução em** [`docs/como-executar.md`](docs/como-executar.md)
 
 ## 📁 Estrutura do Projeto
 
