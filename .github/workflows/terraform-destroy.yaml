@@ -1,13 +1,7 @@
-name: Terraform Destroy (Azure)
+name: Terraform CI/CD - Destroy (Azure)
 
 on:
   workflow_dispatch:   # Apenas execução manual
-  push:
-    branches:
-      - feature/git-action-azure
-  pull_request:
-    branches:
-      - feature/git-action-azure
 
 permissions:
   contents: read
