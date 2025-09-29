@@ -61,6 +61,8 @@ jobs:
       # Passo 5 - valida sintaxe e gera o plano
       - name: Terraform Validate & Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TFC_TOKEN }}
         run: |
           terraform fmt -check || true      # verifica formatação (não falha se errado)
           terraform validate -no-color      # valida sintaxe do código
@@ -117,4 +119,6 @@ jobs:
       # Passo 6 - aplica o plano salvo (sem pedir confirmação)
       - name: Terraform Apply (from plan)
         working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TFC_TOKEN }}
         run: terraform apply -auto-approve tfplan
