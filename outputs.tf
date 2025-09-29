@@ -115,27 +115,37 @@ output "aks_node_resource_group" {
 }
 
 # ============================================
-# Application Gateway Module Outputs
+# API Management Module Outputs
 # ============================================
 
-output "app_gateway_id" {
-  description = "ID do Application Gateway"
-  value       = module.gateway.gateway_id
+output "apim_id" {
+  description = "ID do API Management"
+  value       = module.apim.apim_id
 }
 
-output "app_gateway_name" {
-  description = "Nome do Application Gateway"
-  value       = module.gateway.gateway_name
+output "apim_name" {
+  description = "Nome do API Management"
+  value       = module.apim.apim_name
 }
 
-output "app_gateway_public_ip" {
-  description = "IP público do Application Gateway"
-  value       = module.gateway.public_ip_address
+output "apim_gateway_url" {
+  description = "URL do gateway do API Management"
+  value       = module.apim.apim_gateway_url
 }
 
-output "app_gateway_fqdn" {
-  description = "FQDN do Application Gateway"
-  value       = module.gateway.gateway_fqdn
+output "apim_public_ip_addresses" {
+  description = "IPs públicos do API Management"
+  value       = module.apim.apim_public_ip_addresses
+}
+
+output "apim_private_ip_addresses" {
+  description = "IPs privados do API Management"
+  value       = module.apim.apim_private_ip_addresses
+}
+
+output "apim_portal_url" {
+  description = "URL do portal do desenvolvedor"
+  value       = module.apim.apim_portal_url
 }
 
 # ============================================
@@ -191,10 +201,11 @@ output "infrastructure_summary" {
       cluster_fqdn = module.kubernetes.cluster_fqdn
       node_rg      = module.kubernetes.node_resource_group
     }
-    gateway = {
-      name       = module.gateway.gateway_name
-      public_ip  = module.gateway.public_ip_address
-      fqdn       = module.gateway.gateway_fqdn
+    apim = {
+      name         = module.apim.apim_name
+      gateway_url  = module.apim.apim_gateway_url
+      portal_url   = module.apim.apim_portal_url
+      public_ips   = module.apim.apim_public_ip_addresses
     }
     database = {
       server_name = module.database.server_name

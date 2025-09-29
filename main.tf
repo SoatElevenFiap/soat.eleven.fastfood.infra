@@ -84,30 +84,29 @@ module "kubernetes" {
   depends_on = [azurerm_resource_group.rg-postech, module.vnet]
 }
 
-# # Application Gateway Module
-module "gateway" {
-  source = "./modules/gateway"
+# API Management Module
+module "apim" {
+  source = "./modules/apim"
 
   # Configuração obrigatória
-  gateway_name        = var.app_gateway_name
+  apim_name           = var.apim_name
   resource_group_name = azurerm_resource_group.rg-postech.name
   location           = azurerm_resource_group.rg-postech.location
-  gateway_subnet_id  = module.vnet.app_gateway_subnet_id
+  publisher_name      = var.apim_publisher_name
+  publisher_email     = var.apim_publisher_email
 
   # Configuração econômica
-  sku_name  = var.app_gateway_sku_name
-  sku_tier  = var.app_gateway_sku_tier
-  capacity  = var.app_gateway_capacity
+  sku_name = var.apim_sku_name
 
-  # Backend IPs (será configurado após AKS)
-  backend_ip_addresses = var.app_gateway_backend_ips
+  # Subnet para APIM (usa a mesma subnet do app gateway)
+  apim_subnet_id = module.vnet.app_gateway_subnet_id
 
   # Tags
   tags = merge(var.tags, {
     Environment = var.environment
     Project     = "FastFood-System"
     CreatedBy   = "Terraform"
-    Module      = "ApplicationGateway"
+    Module      = "APIM"
   })
 
   depends_on = [azurerm_resource_group.rg-postech, module.vnet]

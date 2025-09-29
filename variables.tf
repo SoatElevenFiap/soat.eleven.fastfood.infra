@@ -307,3 +307,55 @@ variable "postgresql_database_name" {
   type        = string
   default     = "fastfood"
 }
+
+variable "postgresql_admin_password" {
+  description = "Senha do administrador do PostgreSQL"
+  type        = string
+  default     = "adm123"
+  sensitive   = true
+  
+  validation {
+    condition     = length(var.postgresql_admin_password) >= 6
+    error_message = "A senha deve ter pelo menos 6 caracteres."
+  }
+}
+
+# =================
+# API Management Variables (Configuração Econômica para Estudantes)
+# =================
+variable "apim_name" {
+  description = "Nome do API Management"
+  type        = string
+  default     = "apim-fastfood-postech"
+}
+
+variable "apim_publisher_name" {
+  description = "Nome do publisher do API Management"
+  type        = string
+  default     = "FIAP POSTECH"
+}
+
+variable "apim_publisher_email" {
+  description = "Email do publisher do API Management"
+  type        = string
+  default     = "admin@fiap.com.br"
+  
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", var.apim_publisher_email))
+    error_message = "O email deve ter um formato válido."
+  }
+}
+
+variable "apim_sku_name" {
+  description = "SKU do API Management (econômico para estudantes)"
+  type        = string
+  default     = "Developer_1"
+  
+  validation {
+    condition = contains([
+      "Developer_1",
+      "Basic_1"
+    ], var.apim_sku_name)
+    error_message = "Use um SKU econômico: Developer_1 ou Basic_1."
+  }
+}
