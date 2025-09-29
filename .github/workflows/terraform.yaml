@@ -55,6 +55,7 @@ jobs:
         run: |
           export ARM_USE_OIDC=true
           export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+          export TF_TOKEN_app_terraform_io=${{ secrets.TFC_TOKEN }}
           terraform init -input=false -no-color
 
       # Passo 5 - valida sintaxe e gera o plano
@@ -110,6 +111,7 @@ jobs:
         run: |
           export ARM_USE_OIDC=true
           export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+          export TF_TOKEN_app_terraform_io=${{ secrets.TFC_TOKEN }}
           terraform init -input=false -no-color
 
       # Passo 6 - aplica o plano salvo (sem pedir confirmação)
