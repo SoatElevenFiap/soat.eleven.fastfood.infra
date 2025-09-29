@@ -36,6 +36,8 @@ O **Terraform** é uma ferramenta de Infrastructure as Code (IaC) desenvolvida p
 - Credenciais configuradas para o provedor de nuvem escolhido
   - **Exemplo para Azure:** veja o guia de configuração OIDC para GitHub Actions em [`docs/github-actions-azure-oidc.md`](docs/github-actions-azure-oidc.md)
 - Git para controle de versão
+- Terraform Cloud para o Backend (opcional)
+  - Veja veja o guia de configuração do Terraform Cloud com Azure em [`docs/terraform-cloud-backend.md`](docs/terraform-cloud-backend.md)
 
 ### Comandos básicos
 ```bash
