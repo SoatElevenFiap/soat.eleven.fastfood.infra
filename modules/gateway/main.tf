@@ -94,14 +94,11 @@ resource "azurerm_application_gateway" "main" {
     cookie_based_affinity               = "Disabled"
     request_timeout                     = 60
   }
-  # request_routing_rule {
-  #   name                       = "auth-function-routing-rule"
-  #   rule_type                  = "Basic"
-  #   http_listener_name         = "auth-function-listener"
-  #   backend_address_pool_name  = "auth-function-backend-pool"
-  #   backend_http_settings_name = "auth-function-http-settings"
-  #   priority                   = 200
-  # }
+
+  ssl_policy {
+    policy_name = "AppGwSslPolicy20220101" # Política TLS moderna
+    policy_type = "Predefined"
+  }
 
   tags = var.tags
 }
