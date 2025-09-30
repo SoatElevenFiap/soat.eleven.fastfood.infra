@@ -14,15 +14,15 @@ output "resource_group_id" {
 }
 
 # Storage Account Outputs
-output "storage_account_name" {
-  description = "Nome do Storage Account criado"
-  value       = azurerm_storage_account.tfstate.name
-}
+# output "storage_account_name" {
+#   description = "Nome do Storage Account criado"
+#   value       = azurerm_storage_account.tfstate.name
+# }
 
-output "storage_container_name" {
-  description = "Nome do Container criado"
-  value       = azurerm_storage_container.tfstate.name
-}
+# output "storage_container_name" {
+#   description = "Nome do Container criado"
+#   value       = azurerm_storage_container.tfstate.name
+# }
 
 # ============================================
 # VNet Module Outputs

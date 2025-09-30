@@ -1,0 +1,136 @@
+# Nome visível do workflow no GitHub Actions
+name: Terraform CI/CD (Azure)
+
+# Define os gatilhos de execução do pipeline
+on:
+  pull_request:        # dispara quando alguém abre um PR
+  push:
+    branches: [ "main" ]  # dispara quando há push na branch main
+  workflow_dispatch:   # permite rodar manualmente na interface do GitHub
+
+# Permissões necessárias para o job
+permissions:
+  contents: read       # precisa ler o código
+  id-token: write      # permite que o GitHub emita o token OIDC para o Azure
+
+# Variáveis globais para o workflow
+env:
+  TF_WORKING_DIR: .   # caminho da pasta onde ficam os .tf
+  TF_VERSION: "1.6.0"       # versão fixa do Terraform para evitar mudanças inesperadas
+
+# Primeiro job: apenas "plan" (sem aplicar mudanças)
+jobs:
+  terraform-plan:
+    # if: github.event_name == 'pull_request'   # só roda quando for PR
+    runs-on: ubuntu-latest   # máquina onde o job será executado
+    steps:
+      # Passo 1 - checkout do repositório
+      - uses: actions/checkout@v4
+
+      # Passo 2 - instala o Terraform na versão definida
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      # Passo 3 - login no Azure usando OIDC
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}        # ID da App Registration / Identity
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}        # ID do tenant
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}  # ID da subscription
+   
+      # Passo 3.5 - Debug: listar arquivos
+      - name: List files for debugging
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          pwd
+          ls -la
+          ls -la *.tf || echo "No .tf files found"
+    
+      # Passo 4 - inicializa o Terraform (conecta no backend remoto do Azure Storage)
+      - name: Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          export ARM_USE_OIDC=true
+          export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+          export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+          export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          export TF_TOKEN_app_terraform_io=${{ secrets.TFC_TOKEN }}
+          terraform init -input=false -no-color
+
+      # Passo 5 - valida sintaxe e gera o plano
+      - name: Terraform Validate & Plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TFC_TOKEN }}
+        run: |
+          terraform fmt -check || true      # verifica formatação (não falha se errado)
+          terraform validate -no-color      # valida sintaxe do código
+          terraform plan -no-color -out=tfplan  # gera o plano (preview das mudanças)
+
+      # Passo 6 - salva o plano como artefato para ser usado no apply
+      - name: Upload plan (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ env.TF_WORKING_DIR }}/tfplan
+
+  # Segundo job: aplica as mudanças (apply)
+  terraform-apply:
+    # Só roda se for push na main ou se for executado manualmente
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    needs: terraform-plan   # garante que o job de plan rodou antes
+    runs-on: ubuntu-latest
+    environment: production   # pode exigir aprovação manual no GitHub antes de rodar
+    steps:
+      # Passo 1 - checkout do código
+      - uses: actions/checkout@v4
+
+      # Passo 2 - instala o Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      # Passo 3 - login no Azure via OIDC
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Passo 4 - baixa o plano gerado no job anterior
+      - name: Download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ env.TF_WORKING_DIR }}
+
+      # Passo 5 - re-inicializa o Terraform para garantir que está conectado ao backend
+      - name: Terraform Init (again)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          export ARM_USE_OIDC=true
+          export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+          export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+          export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          export TF_TOKEN_app_terraform_io=${{ secrets.TFC_TOKEN }}
+          terraform init -input=false -no-color
+
+      # Passo 6 - aplica o plano salvo (sem pedir confirmação)
+      - name: Terraform Apply (from plan)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TFC_TOKEN }}
+        run: terraform apply -auto-approve tfplan

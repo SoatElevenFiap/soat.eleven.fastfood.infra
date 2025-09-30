@@ -6,25 +6,25 @@ resource "azurerm_resource_group" "rg-postech" {
   tags = var.tags
 }
 
-resource "azurerm_storage_account" "tfstate" {
-  name                     = var.storage_account_name
-  resource_group_name      = azurerm_resource_group.rg-postech.name
-  location                 = azurerm_resource_group.rg-postech.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+# resource "azurerm_storage_account" "tfstate" {
+#   name                     = var.storage_account_name
+#   resource_group_name      = azurerm_resource_group.rg-postech.name
+#   location                 = azurerm_resource_group.rg-postech.location
+#   account_tier             = "Standard"
+#   account_replication_type = "LRS"
 
-  tags = {
-    Environment = "dev"
-    Project     = "FastFood-System"
-    CreatedBy   = "Terraform"
-  }
-}
+#   tags = {
+#     Environment = "dev"
+#     Project     = "FastFood-System"
+#     CreatedBy   = "Terraform"
+#   }
+# }
 
-resource "azurerm_storage_container" "tfstate" {
-  name                  = var.terraform_storage_container_name
-  storage_account_name  = azurerm_storage_account.tfstate.name
-  container_access_type = "private"
-}
+# resource "azurerm_storage_container" "tfstate" {
+#   name                  = var.terraform_storage_container_name
+#   storage_account_name  = azurerm_storage_account.tfstate.name
+#   container_access_type = "private"
+# }
 
 # Virtual Network Module
 module "vnet" {
@@ -84,7 +84,7 @@ module "kubernetes" {
   depends_on = [azurerm_resource_group.rg-postech, module.vnet]
 }
 
-# Application Gateway Module
+# # Application Gateway Module
 module "gateway" {
   source = "./modules/gateway"
 
@@ -119,10 +119,9 @@ module "database" {
   source = "./modules/database"
 
   # Configuração obrigatória
-  server_name         = var.postgresql_server_name
-  resource_group_name = azurerm_resource_group.rg-postech.name
-  # location            = "Brazil South" # PostgreSQL não disponível em East US para conta de estudante
-  location = azurerm_resource_group.rg-postech.location # Use a mesma variável
+  server_name             = var.postgresql_server_name
+  resource_group_name     = azurerm_resource_group.rg-postech.name
+  location               = "Canada Central"  # PostgreSQL não disponível em East US para conta de estudante
 
   # Configuração econômica
   postgresql_version    = var.postgresql_version

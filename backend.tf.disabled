@@ -1,8 +1,0 @@
-terraform {
-  backend "azurerm" {
-    resource_group_name  = "rg-fiap-fastfood"
-    storage_account_name = "storagefiapfastfood"  # Nome fixo que você vai criar
-    container_name       = "fastfood-tfstate"
-    key                  = "terraform.tfstate"
-  }
-}

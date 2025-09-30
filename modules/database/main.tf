@@ -4,8 +4,8 @@ resource "azurerm_postgresql_flexible_server" "main" {
   resource_group_name    = var.resource_group_name
   location              = var.location
   version               = var.postgresql_version
-  administrator_login    = "adm"
-  administrator_password = "adm123"
+  administrator_login    = "adm" #usuario banco
+  administrator_password = "adm123" #senha banco
   
   # Storage configuration (mínimo)
   storage_mb = var.storage_mb
