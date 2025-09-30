@@ -18,6 +18,10 @@ resource "azurerm_postgresql_flexible_server" "main" {
   geo_redundant_backup_enabled = false  # Desabilitado para economia
   
   tags = var.tags
+
+  lifecycle {
+    ignore_changes = [ zone, high_availability ]
+  }
 }
 
 # PostgreSQL Database
@@ -26,4 +30,12 @@ resource "azurerm_postgresql_flexible_server_database" "main" {
   server_id = azurerm_postgresql_flexible_server.main.id
   collation = "en_US.utf8"
   charset   = "UTF8"
+}
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "rule-allow-service-azure" {
+  name             = "rule-allow-service-azure-fw"
+  
+  server_id        = azurerm_postgresql_flexible_server.main.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }

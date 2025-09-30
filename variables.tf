@@ -13,11 +13,12 @@ variable "resource_group_name" {
 variable "location" {
   description = "Localização dos recursos no Azure"
   type        = string
-  default     = "West Europe"
+  default     = "Brazil South"
 
   validation {
     condition = contains([
       "West US 3",
+      "West US 2",
       "East US",
       "Central US",
       "South Central US",
@@ -156,7 +157,7 @@ variable "aks_node_count" {
   description = "Número de nós no cluster AKS"
   type        = number
   default     = 1
-  
+
   validation {
     condition     = var.aks_node_count >= 1 && var.aks_node_count <= 5
     error_message = "O número de nós deve estar entre 1 e 5 para economia."
@@ -166,15 +167,16 @@ variable "aks_node_count" {
 variable "aks_vm_size" {
   description = "Tamanho da VM para os nós AKS (econômico)"
   type        = string
-  default     = "Standard_B2s"
-  
+  default     = "Standard_E2s_v3"
+
   validation {
     condition = contains([
       "Standard_B1s",
-      "Standard_B2s", 
+      "Standard_B2s",
       "Standard_B1ms",
       "Standard_B2ms",
-      "Standard_DS2_v2"
+      "Standard_D2ps_v6",
+      "Standard_E2s_v3"
     ], var.aks_vm_size)
     error_message = "Use um tamanho de VM econômico (série B ou DS2_v2)."
   }
@@ -190,7 +192,7 @@ variable "aks_network_plugin" {
   description = "Plugin de rede do AKS"
   type        = string
   default     = "kubenet"
-  
+
   validation {
     condition = contains([
       "kubenet",
@@ -213,7 +215,7 @@ variable "app_gateway_sku_name" {
   description = "Nome do SKU do Application Gateway"
   type        = string
   default     = "Standard_v2"
-  
+
   validation {
     condition = contains([
       "Standard_v2",
@@ -227,7 +229,7 @@ variable "app_gateway_sku_tier" {
   description = "Tier do SKU do Application Gateway"
   type        = string
   default     = "Standard_v2"
-  
+
   validation {
     condition     = contains(["Standard_v2", "WAF_v2"], var.app_gateway_sku_tier)
     error_message = "Tier deve ser Standard_v2 ou WAF_v2 (v1 foi descontinuado)."
@@ -238,7 +240,7 @@ variable "app_gateway_capacity" {
   description = "Capacidade do Application Gateway"
   type        = number
   default     = 1
-  
+
   validation {
     condition     = var.app_gateway_capacity >= 1 && var.app_gateway_capacity <= 3
     error_message = "Capacidade deve estar entre 1 e 3 para economia."
@@ -270,11 +272,11 @@ variable "postgresql_sku_name" {
   description = "Nome do SKU do PostgreSQL (econômico)"
   type        = string
   default     = "B_Standard_B1ms"
-  
+
   validation {
     condition = contains([
       "B_Standard_B1ms",
-      "B_Standard_B2s", 
+      "B_Standard_B2s",
       "GP_Standard_D2s_v3"
     ], var.postgresql_sku_name)
     error_message = "Use um SKU econômico (Basic B1ms, B2s ou GP D2s_v3)."
@@ -284,8 +286,8 @@ variable "postgresql_sku_name" {
 variable "postgresql_storage_mb" {
   description = "Armazenamento do PostgreSQL em MB"
   type        = number
-  default     = 32768  # 32GB
-  
+  default     = 32768 # 32GB
+
   validation {
     condition     = var.postgresql_storage_mb >= 32768 && var.postgresql_storage_mb <= 65536
     error_message = "O armazenamento deve estar entre 32GB e 64GB para economia."
@@ -296,7 +298,7 @@ variable "postgresql_backup_retention_days" {
   description = "Dias de retenção de backup do PostgreSQL"
   type        = number
   default     = 7
-  
+
   validation {
     condition     = var.postgresql_backup_retention_days >= 7 && var.postgresql_backup_retention_days <= 14
     error_message = "A retenção de backup deve estar entre 7 e 14 dias para economia."

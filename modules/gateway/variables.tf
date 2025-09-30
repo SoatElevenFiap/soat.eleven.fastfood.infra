@@ -68,3 +68,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "function_app_hostname" {
+  description = "Hostname do Function App para configuração do backend"
+  type        = string
+}
