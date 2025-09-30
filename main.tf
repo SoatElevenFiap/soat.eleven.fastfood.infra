@@ -143,13 +143,30 @@ module "database" {
   depends_on = [azurerm_resource_group.rg-postech]
 }
 
+# Storage Account para Azure Function
+resource "azurerm_storage_account" "function_storage" {
+  name                     = "stfastfoodfunction"
+  resource_group_name      = azurerm_resource_group.rg-postech.name
+  location                = azurerm_resource_group.rg-postech.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags = merge(var.tags, {
+    Environment = var.environment
+    Project     = "FastFood-System"
+    CreatedBy   = "Terraform"
+    Purpose     = "Function Storage"
+  })
+}
+
+#Azure Function Module
 module "auth_function" {
   source = "./modules/auth-function"
 
   function_name = "fastfood-auth-function"
 
-  storage_account_name       = azurerm_storage_account.tfstate.name
-  storage_account_access_key = azurerm_storage_account.tfstate.primary_access_key
+  storage_account_name       = azurerm_storage_account.function_storage.name
+  storage_account_access_key = azurerm_storage_account.function_storage.primary_access_key
 
   resource_group_name = azurerm_resource_group.rg-postech.name
   location            = azurerm_resource_group.rg-postech.location

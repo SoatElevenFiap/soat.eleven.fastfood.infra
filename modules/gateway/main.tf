@@ -15,11 +15,6 @@ resource "azurerm_application_gateway" "main" {
   resource_group_name = var.resource_group_name
   location            = var.location
 
-  # Seta politica para evitar erro de ssl deprecated
-  ssl_policy {
-    policy_name = "AppGwSslPolicy20220101"
-  }
-
   # SKU mínimo para economia
   sku {
     name     = var.sku_name
@@ -93,7 +88,7 @@ resource "azurerm_application_gateway" "main" {
   backend_http_settings {
     name                                = "auth-function-http-settings"
     port                                = 443
-    path                                = ""
+    path                                = "/"
     protocol                            = "Https"
     pick_host_name_from_backend_address = true
     cookie_based_affinity               = "Disabled"

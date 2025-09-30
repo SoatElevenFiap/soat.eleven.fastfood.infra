@@ -23,6 +23,7 @@ resource "azurerm_linux_function_app" "fastfood_auth_function" {
 
   site_config {
     health_check_path = "/health"
+    health_check_eviction_time_in_min = 2
     application_stack {
       dotnet_version = "8.0"
       use_dotnet_isolated_runtime = true
