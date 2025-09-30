@@ -41,11 +41,3 @@ app_gateway_capacity    = 1             # Capacidade mínima
 app_gateway_backend_ips = []            # Será configurado após deploy do AKS
 
 # =================
-# Configuração PostgreSQL - Configuração Econômica
-# =================
-postgresql_server_name           = "psql-fastfood-postech-and-001"
-postgresql_version               = "14"
-postgresql_sku_name              = "B_Standard_B1ms" # SKU mais econômico
-postgresql_storage_mb            = 32768             # 32GB - mínimo
-postgresql_backup_retention_days = 7                 # Mínimo para economia
-postgresql_database_name         = "fastfood"

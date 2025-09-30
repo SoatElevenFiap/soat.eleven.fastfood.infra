@@ -139,36 +139,6 @@ output "app_gateway_fqdn" {
 }
 
 # ============================================
-# PostgreSQL Module Outputs
-# ============================================
-
-output "postgresql_server_id" {
-  description = "ID do servidor PostgreSQL"
-  value       = module.database.server_id
-}
-
-output "postgresql_server_name" {
-  description = "Nome do servidor PostgreSQL"
-  value       = module.database.server_name
-}
-
-output "postgresql_server_fqdn" {
-  description = "FQDN do servidor PostgreSQL"
-  value       = module.database.server_fqdn
-}
-
-output "postgresql_databases" {
-  description = "Nome do banco de dados criado"
-  value       = module.database.database_name
-}
-
-output "postgresql_connection_string" {
-  description = "String de conexão do PostgreSQL"
-  value       = module.database.connection_string
-  sensitive   = true
-}
-
-# ============================================
 # Summary Outputs
 # ============================================
 
@@ -195,11 +165,6 @@ output "infrastructure_summary" {
       name      = module.gateway.gateway_name
       public_ip = module.gateway.public_ip_address
       fqdn      = module.gateway.gateway_fqdn
-    }
-    database = {
-      server_name = module.database.server_name
-      server_fqdn = module.database.server_fqdn
-      databases   = module.database.database_name
     }
   }
 }

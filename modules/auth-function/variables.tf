@@ -50,12 +50,3 @@ variable "location" {
   type        = string
 }
 
-variable "database_name" {
-  description = "Nome do banco de dados principal"
-  type        = string
-}
-
-variable "connection_string_database" {
-  description = "Connection string do banco de dados PostgreSQL"
-  type        = string  
-}

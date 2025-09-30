@@ -114,35 +114,6 @@ module "gateway" {
   depends_on = [azurerm_resource_group.rg-postech, module.vnet, module.auth_function]
 }
 
-# PostgreSQL Database Module
-module "database" {
-  source = "./modules/database"
-
-  # Configuração obrigatória
-  server_name             = var.postgresql_server_name
-  resource_group_name     = azurerm_resource_group.rg-postech.name
-  location               = "Canada Central"  # PostgreSQL não disponível em East US para conta de estudante
-
-  # Configuração econômica
-  postgresql_version    = var.postgresql_version
-  sku_name              = var.postgresql_sku_name
-  storage_mb            = var.postgresql_storage_mb
-  backup_retention_days = var.postgresql_backup_retention_days
-
-  # Banco de dados
-  database_name = var.postgresql_database_name
-
-  # Tags
-  tags = merge(var.tags, {
-    Environment = var.environment
-    Project     = "FastFood-System"
-    CreatedBy   = "Terraform"
-    Module      = "PostgreSQL"
-  })
-
-  depends_on = [azurerm_resource_group.rg-postech]
-}
-
 # Storage Account para Azure Function
 resource "azurerm_storage_account" "function_storage" {
   name                     = "stfastfoodfunction"
@@ -162,7 +133,6 @@ resource "azurerm_storage_account" "function_storage" {
 #Azure Function Module
 module "auth_function" {
   source = "./modules/auth-function"
-
   function_name = "fastfood-auth-function"
 
   storage_account_name       = azurerm_storage_account.function_storage.name
@@ -170,9 +140,6 @@ module "auth_function" {
 
   resource_group_name = azurerm_resource_group.rg-postech.name
   location            = azurerm_resource_group.rg-postech.location
-
-  database_name              = module.database.database_name
-  connection_string_database = module.database.connection_string
 
   # Tags
   tags = merge(var.tags, {
@@ -182,5 +149,5 @@ module "auth_function" {
     Module      = "AuthFunction"
   })
 
-  depends_on = [azurerm_resource_group.rg-postech, module.database]
+  depends_on = [azurerm_resource_group.rg-postech]
 }
