@@ -55,12 +55,6 @@ variable "retention_enabled" {
   default     = false
 }
 
-variable "aks_principal_id" {
-  description = "Principal ID do AKS para role assignment (opcional)"
-  type        = string
-  default     = null
-}
-
 variable "tags" {
   description = "Tags para aplicar aos recursos"
   type        = map(string)

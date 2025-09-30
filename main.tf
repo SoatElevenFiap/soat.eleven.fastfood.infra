@@ -165,9 +165,6 @@ module "acr" {
   sku_name     = var.acr_sku_name
   admin_enabled = var.acr_admin_enabled
 
-  # Integração com AKS será configurada em uma segunda execução
-  # aks_principal_id = module.kubernetes.cluster_identity.principal_id
-
   # Tags
   tags = merge(var.tags, {
     Environment = var.environment
@@ -176,7 +173,7 @@ module "acr" {
     Module      = "ACR"
   })
 
-  depends_on = [azurerm_resource_group.rg-postech]
+  depends_on = [azurerm_resource_group.rg-postech, module.kubernetes]
 }
 
 # Azure Key Vault Module
@@ -206,4 +203,13 @@ module "keyvault" {
   })
 
   depends_on = [azurerm_resource_group.rg-postech]
+}
+
+# Role assignment para AKS fazer pull das imagens do ACR
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  principal_id         = module.kubernetes.cluster_identity.principal_id
+  role_definition_name = "AcrPull"
+  scope                = module.acr.acr_id
+
+  depends_on = [module.kubernetes, module.acr]
 }
