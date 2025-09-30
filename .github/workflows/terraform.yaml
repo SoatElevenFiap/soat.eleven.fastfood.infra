@@ -55,11 +55,20 @@ jobs:
         run: |
           export ARM_USE_OIDC=true
           export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+          export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+          export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          export TF_TOKEN_app_terraform_io=${{ secrets.TFC_TOKEN }}
           terraform init -input=false -no-color
 
       # Passo 5 - valida sintaxe e gera o plano
       - name: Terraform Validate & Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TFC_TOKEN }}
         run: |
           terraform fmt -check || true      # verifica formatação (não falha se errado)
           terraform validate -no-color      # valida sintaxe do código
@@ -110,9 +119,18 @@ jobs:
         run: |
           export ARM_USE_OIDC=true
           export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+          export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+          export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          export TF_TOKEN_app_terraform_io=${{ secrets.TFC_TOKEN }}
           terraform init -input=false -no-color
 
       # Passo 6 - aplica o plano salvo (sem pedir confirmação)
       - name: Terraform Apply (from plan)
         working-directory: ${{ env.TF_WORKING_DIR }}
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TFC_TOKEN }}
         run: terraform apply -auto-approve tfplan
