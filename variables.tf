@@ -254,3 +254,61 @@ variable "app_gateway_backend_ips" {
 }
 
 # ============================================
+# Azure Container Registry Variables
+# ============================================
+
+variable "acr_name" {
+  description = "Nome do Azure Container Registry"
+  type        = string
+  default     = "acrfastfoodpostech"
+  
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9]{5,50}$", var.acr_name))
+    error_message = "O nome do ACR deve ter entre 5-50 caracteres alfanuméricos."
+  }
+}
+
+variable "acr_sku_name" {
+  description = "SKU do Container Registry (Basic, Standard, Premium)"
+  type        = string
+  default     = "Basic"
+  
+  validation {
+    condition     = contains(["Basic", "Standard", "Premium"], var.acr_sku_name)
+    error_message = "SKU deve ser Basic, Standard ou Premium."
+  }
+}
+
+variable "acr_admin_enabled" {
+  description = "Habilitar admin user para o ACR"
+  type        = bool
+  default     = true
+}
+
+# ============================================
+# Azure Key Vault Variables
+# ============================================
+
+variable "keyvault_name" {
+  description = "Nome do Azure Key Vault"
+  type        = string
+  default     = "kv-fastfood-postech"
+  
+  validation {
+    condition     = can(regex("^[a-zA-Z]([a-zA-Z0-9-]){1,22}[a-zA-Z0-9]$", var.keyvault_name))
+    error_message = "O nome do Key Vault deve ter entre 3-24 caracteres, começar com letra, e conter apenas letras, números e hífens."
+  }
+}
+
+variable "keyvault_sku_name" {
+  description = "SKU do Key Vault (standard ou premium)"
+  type        = string
+  default     = "standard"
+  
+  validation {
+    condition     = contains(["standard", "premium"], var.keyvault_sku_name)
+    error_message = "SKU deve ser standard ou premium."
+  }
+}
+
+# ============================================

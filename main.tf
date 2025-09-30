@@ -151,3 +151,59 @@ module "auth_function" {
 
   depends_on = [azurerm_resource_group.rg-postech]
 }
+
+# Azure Container Registry Module
+module "acr" {
+  source = "./modules/acr"
+
+  # Configuração obrigatória
+  acr_name            = var.acr_name
+  resource_group_name = azurerm_resource_group.rg-postech.name
+  location            = azurerm_resource_group.rg-postech.location
+
+  # Configuração econômica
+  sku_name     = var.acr_sku_name
+  admin_enabled = var.acr_admin_enabled
+
+  # Integração com AKS será configurada em uma segunda execução
+  # aks_principal_id = module.kubernetes.cluster_identity.principal_id
+
+  # Tags
+  tags = merge(var.tags, {
+    Environment = var.environment
+    Project     = "FastFood-System"
+    CreatedBy   = "Terraform"
+    Module      = "ACR"
+  })
+
+  depends_on = [azurerm_resource_group.rg-postech]
+}
+
+# Azure Key Vault Module
+module "keyvault" {
+  source = "./modules/keyvault"
+
+  # Configuração obrigatória
+  keyvault_name       = var.keyvault_name
+  resource_group_name = azurerm_resource_group.rg-postech.name
+  location            = azurerm_resource_group.rg-postech.location
+
+  # Configuração econômica
+  sku_name = var.keyvault_sku_name
+
+  # Configuração de acesso (integração opcional - será configurado após criação)
+  # function_app_principal_id = null  # Pode ser configurado depois
+
+  # Configuração de secret do banco de dados (será configurado manualmente)
+  # database_connection_string = null  # Será definido após criação do banco
+
+  # Tags
+  tags = merge(var.tags, {
+    Environment = var.environment
+    Project     = "FastFood-System"
+    CreatedBy   = "Terraform"
+    Module      = "KeyVault"
+  })
+
+  depends_on = [azurerm_resource_group.rg-postech]
+}

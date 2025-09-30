@@ -166,5 +166,76 @@ output "infrastructure_summary" {
       public_ip = module.gateway.public_ip_address
       fqdn      = module.gateway.gateway_fqdn
     }
+    acr = {
+      name         = module.acr.acr_name
+      login_server = module.acr.login_server
+      id           = module.acr.acr_id
+    }
+    keyvault = {
+      name = module.keyvault.keyvault_name
+      uri  = module.keyvault.keyvault_uri
+      id   = module.keyvault.keyvault_id
+    }
   }
+}
+
+# ============================================
+# Azure Container Registry Outputs
+# ============================================
+
+output "acr_id" {
+  description = "ID do Azure Container Registry"
+  value       = module.acr.acr_id
+}
+
+output "acr_name" {
+  description = "Nome do Azure Container Registry"
+  value       = module.acr.acr_name
+}
+
+output "acr_login_server" {
+  description = "URL do servidor de login do ACR"
+  value       = module.acr.login_server
+}
+
+output "acr_admin_username" {
+  description = "Nome de usuário admin do ACR"
+  value       = module.acr.admin_username
+  sensitive   = true
+}
+
+output "acr_admin_password" {
+  description = "Senha admin do ACR"
+  value       = module.acr.admin_password
+  sensitive   = true
+}
+
+# ============================================
+# Azure Key Vault Outputs
+# ============================================
+
+output "keyvault_id" {
+  description = "ID do Azure Key Vault"
+  value       = module.keyvault.keyvault_id
+}
+
+output "keyvault_name" {
+  description = "Nome do Azure Key Vault"
+  value       = module.keyvault.keyvault_name
+}
+
+output "keyvault_uri" {
+  description = "URI do Azure Key Vault"
+  value       = module.keyvault.keyvault_uri
+}
+
+output "keyvault_tenant_id" {
+  description = "Tenant ID do Azure Key Vault"
+  value       = module.keyvault.tenant_id
+}
+
+output "database_secret_name" {
+  description = "Nome do secret da connection string do banco"
+  value       = module.keyvault.database_secret_name
+  sensitive   = true
 }
