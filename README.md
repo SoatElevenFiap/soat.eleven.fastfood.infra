@@ -68,13 +68,53 @@ terraform destroy
 
 ## 🌐 Infraestrutura Provisionada
 
-Este repositório provisiona os seguintes recursos:
-- [ ] Compute instances (EC2, VM, etc.)
-- [ ] Load Balancers
-- [ ] Databases (RDS, SQL Database, etc.)
-- [ ] Networking (VPC, Subnets, Security Groups)
-- [ ] Storage (S3, Blob Storage, etc.)
-- [ ] Monitoring e Logging
+Este repositório provisiona os seguintes recursos na Azure:
+
+### Módulos Principais
+- ✅ **Virtual Network (VNet)** - Rede virtual com subnets para aplicações, banco de dados e Application Gateway
+- ✅ **Azure Kubernetes Service (AKS)** - Cluster Kubernetes para orquestração de containers
+- ✅ **Application Gateway** - Load balancer layer 7 com roteamento baseado em path
+- ✅ **Azure Function** - Função serverless para autenticação
+- ✅ **Azure Container Registry (ACR)** - Registry privado para imagens Docker
+- ✅ **Azure Key Vault** - Gerenciamento seguro de secrets e chaves
+
+### Arquitetura de Rede
+- **App Subnet**: `10.0.1.0/24` - Para aplicações e AKS
+- **Database Subnet**: `10.0.2.0/24` - Para recursos de banco de dados
+- **Application Gateway Subnet**: `10.0.3.0/24` - Para o Application Gateway
+
+### Configuração Econômica
+Todos os recursos estão configurados com SKUs básicos para otimização de custos, ideal para contas Azure for Students:
+- **AKS**: 1 nó `Standard_E2s_v3`
+- **Application Gateway**: `Standard_v2` com 1 instância
+- **ACR**: SKU `Basic`
+- **Key Vault**: SKU `standard`
+- **Function App**: Plano de consumo `Y1`
+
+### Integração entre Serviços
+- **ACR ↔ AKS**: Integração para pull automático de imagens (configurado após deployment)
+- **Key Vault ↔ Function App**: Acesso a secrets para configurações (opcional)
+- **Application Gateway ↔ Function App**: Roteamento para `/api/auth*`
+
+### Próximos Passos
+Após o deployment da infraestrutura:
+
+1. **Configurar integração ACR-AKS**:
+   ```bash
+   # Habilitar o AKS para fazer pull do ACR
+   az aks update -n aks-fastfood-postech -g rg-fastfood-postech --attach-acr acrfastfoodpostech
+   ```
+
+2. **Configurar secrets no Key Vault**:
+   ```bash
+   # Adicionar connection string do banco de dados
+   az keyvault secret set --vault-name kv-fastfood-postech --name "database-connection-string" --value "sua-connection-string"
+   ```
+
+3. **Configurar kubectl para AKS**:
+   ```bash
+   az aks get-credentials --resource-group rg-fastfood-postech --name aks-fastfood-postech
+   ```
 
 ## 📚 Referências e Documentação
 

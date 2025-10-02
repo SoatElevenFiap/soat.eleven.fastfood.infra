@@ -6,6 +6,12 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 3.100.0"
     }
+
+    # Provedor TIME (Necessário para time_sleep)
+    time = {
+      source  = "hashicorp/time"
+      version = "~> 0.9" # A versão "~> 0.9" garante a versão mais recente da série 0.9
+    }
   }
 }
 
@@ -16,4 +22,3 @@ provider "azurerm" {
     }
   }
 }
-

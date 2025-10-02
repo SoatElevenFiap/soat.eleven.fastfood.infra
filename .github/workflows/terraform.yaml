@@ -3,10 +3,11 @@ name: Terraform CI/CD (Azure)
 
 # Define os gatilhos de execução do pipeline
 on:
-  pull_request:        # dispara quando alguém abre um PR
+  # 1. Dispara quando há um commit (push) na branch 'main'
   push:
-    branches: [ "main" ]  # dispara quando há push na branch main
-  workflow_dispatch:   # permite rodar manualmente na interface do GitHub
+    branches: [ "main" ]    
+  # 2. Permite rodar o workflow manualmente na interface do GitHub
+  workflow_dispatch:
 
 # Permissões necessárias para o job
 permissions:

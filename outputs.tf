@@ -139,36 +139,6 @@ output "app_gateway_fqdn" {
 }
 
 # ============================================
-# PostgreSQL Module Outputs
-# ============================================
-
-output "postgresql_server_id" {
-  description = "ID do servidor PostgreSQL"
-  value       = module.database.server_id
-}
-
-output "postgresql_server_name" {
-  description = "Nome do servidor PostgreSQL"
-  value       = module.database.server_name
-}
-
-output "postgresql_server_fqdn" {
-  description = "FQDN do servidor PostgreSQL"
-  value       = module.database.server_fqdn
-}
-
-output "postgresql_databases" {
-  description = "Nome do banco de dados criado"
-  value       = module.database.database_name
-}
-
-output "postgresql_connection_string" {
-  description = "String de conexão do PostgreSQL"
-  value       = module.database.connection_string
-  sensitive   = true
-}
-
-# ============================================
 # Summary Outputs
 # ============================================
 
@@ -180,10 +150,10 @@ output "infrastructure_summary" {
       location = azurerm_resource_group.rg-postech.location
     }
     networking = {
-      vnet_name       = module.vnet.vnet_name
-      vnet_id         = module.vnet.vnet_id
-      app_subnet_id   = module.vnet.app_subnet_id
-      db_subnet_id    = module.vnet.db_subnet_id
+      vnet_name         = module.vnet.vnet_name
+      vnet_id           = module.vnet.vnet_id
+      app_subnet_id     = module.vnet.app_subnet_id
+      db_subnet_id      = module.vnet.db_subnet_id
       gateway_subnet_id = module.vnet.gateway_subnet_id
     }
     kubernetes = {
@@ -192,14 +162,80 @@ output "infrastructure_summary" {
       node_rg      = module.kubernetes.node_resource_group
     }
     gateway = {
-      name       = module.gateway.gateway_name
-      public_ip  = module.gateway.public_ip_address
-      fqdn       = module.gateway.gateway_fqdn
+      name      = module.gateway.gateway_name
+      public_ip = module.gateway.public_ip_address
+      fqdn      = module.gateway.gateway_fqdn
     }
-    database = {
-      server_name = module.database.server_name
-      server_fqdn = module.database.server_fqdn
-      databases   = module.database.database_name
+    acr = {
+      name         = module.acr.acr_name
+      login_server = module.acr.login_server
+      id           = module.acr.acr_id
+    }
+    keyvault = {
+      name = module.keyvault.keyvault_name
+      uri  = module.keyvault.keyvault_uri
+      id   = module.keyvault.keyvault_id
     }
   }
+}
+
+# ============================================
+# Azure Container Registry Outputs
+# ============================================
+
+output "acr_id" {
+  description = "ID do Azure Container Registry"
+  value       = module.acr.acr_id
+}
+
+output "acr_name" {
+  description = "Nome do Azure Container Registry"
+  value       = module.acr.acr_name
+}
+
+output "acr_login_server" {
+  description = "URL do servidor de login do ACR"
+  value       = module.acr.login_server
+}
+
+output "acr_admin_username" {
+  description = "Nome de usuário admin do ACR"
+  value       = module.acr.admin_username
+  sensitive   = true
+}
+
+output "acr_admin_password" {
+  description = "Senha admin do ACR"
+  value       = module.acr.admin_password
+  sensitive   = true
+}
+
+# ============================================
+# Azure Key Vault Outputs
+# ============================================
+
+output "keyvault_id" {
+  description = "ID do Azure Key Vault"
+  value       = module.keyvault.keyvault_id
+}
+
+output "keyvault_name" {
+  description = "Nome do Azure Key Vault"
+  value       = module.keyvault.keyvault_name
+}
+
+output "keyvault_uri" {
+  description = "URI do Azure Key Vault"
+  value       = module.keyvault.keyvault_uri
+}
+
+output "keyvault_tenant_id" {
+  description = "Tenant ID do Azure Key Vault"
+  value       = module.keyvault.tenant_id
+}
+
+output "database_secret_name" {
+  description = "Nome do secret da connection string do banco"
+  value       = module.keyvault.database_secret_name
+  sensitive   = true
 }

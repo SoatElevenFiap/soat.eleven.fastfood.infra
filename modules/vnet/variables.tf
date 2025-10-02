@@ -27,6 +27,7 @@ variable "location" {
   validation {
     condition = contains([
       "West US 3", "westus3",
+      "West US 2", "westus2",
       "East US", "eastus",
       "Central US", "centralus",
       "South Central US", "southcentralus",

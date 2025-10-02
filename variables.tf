@@ -13,11 +13,12 @@ variable "resource_group_name" {
 variable "location" {
   description = "Localização dos recursos no Azure"
   type        = string
-  default     = "West Europe"
+  default     = "Brazil South"
 
   validation {
     condition = contains([
       "West US 3",
+      "West US 2",
       "East US",
       "Central US",
       "South Central US",
@@ -156,7 +157,7 @@ variable "aks_node_count" {
   description = "Número de nós no cluster AKS"
   type        = number
   default     = 1
-  
+
   validation {
     condition     = var.aks_node_count >= 1 && var.aks_node_count <= 5
     error_message = "O número de nós deve estar entre 1 e 5 para economia."
@@ -166,15 +167,16 @@ variable "aks_node_count" {
 variable "aks_vm_size" {
   description = "Tamanho da VM para os nós AKS (econômico)"
   type        = string
-  default     = "Standard_B2s"
-  
+  default     = "Standard_E2s_v3"
+
   validation {
     condition = contains([
       "Standard_B1s",
-      "Standard_B2s", 
+      "Standard_B2s",
       "Standard_B1ms",
       "Standard_B2ms",
-      "Standard_DS2_v2"
+      "Standard_D2ps_v6",
+      "Standard_E2s_v3"
     ], var.aks_vm_size)
     error_message = "Use um tamanho de VM econômico (série B ou DS2_v2)."
   }
@@ -190,7 +192,7 @@ variable "aks_network_plugin" {
   description = "Plugin de rede do AKS"
   type        = string
   default     = "kubenet"
-  
+
   validation {
     condition = contains([
       "kubenet",
@@ -213,7 +215,7 @@ variable "app_gateway_sku_name" {
   description = "Nome do SKU do Application Gateway"
   type        = string
   default     = "Standard_v2"
-  
+
   validation {
     condition = contains([
       "Standard_v2",
@@ -227,7 +229,7 @@ variable "app_gateway_sku_tier" {
   description = "Tier do SKU do Application Gateway"
   type        = string
   default     = "Standard_v2"
-  
+
   validation {
     condition     = contains(["Standard_v2", "WAF_v2"], var.app_gateway_sku_tier)
     error_message = "Tier deve ser Standard_v2 ou WAF_v2 (v1 foi descontinuado)."
@@ -238,7 +240,7 @@ variable "app_gateway_capacity" {
   description = "Capacidade do Application Gateway"
   type        = number
   default     = 1
-  
+
   validation {
     condition     = var.app_gateway_capacity >= 1 && var.app_gateway_capacity <= 3
     error_message = "Capacidade deve estar entre 1 e 3 para economia."
@@ -251,60 +253,62 @@ variable "app_gateway_backend_ips" {
   default     = []
 }
 
-# =================
-# PostgreSQL Variables (Configuração Simples e Econômica)
-# =================
-variable "postgresql_server_name" {
-  description = "Nome do servidor PostgreSQL"
-  type        = string
-  default     = "psql-fastfood-postech"
-}
+# ============================================
+# Azure Container Registry Variables
+# ============================================
 
-variable "postgresql_version" {
-  description = "Versão do PostgreSQL"
+variable "acr_name" {
+  description = "Nome do Azure Container Registry"
   type        = string
-  default     = "14"
-}
-
-variable "postgresql_sku_name" {
-  description = "Nome do SKU do PostgreSQL (econômico)"
-  type        = string
-  default     = "B_Standard_B1ms"
+  default     = "acrfastfoodpostech"
   
   validation {
-    condition = contains([
-      "B_Standard_B1ms",
-      "B_Standard_B2s", 
-      "GP_Standard_D2s_v3"
-    ], var.postgresql_sku_name)
-    error_message = "Use um SKU econômico (Basic B1ms, B2s ou GP D2s_v3)."
+    condition     = can(regex("^[a-zA-Z0-9]{5,50}$", var.acr_name))
+    error_message = "O nome do ACR deve ter entre 5-50 caracteres alfanuméricos."
   }
 }
 
-variable "postgresql_storage_mb" {
-  description = "Armazenamento do PostgreSQL em MB"
-  type        = number
-  default     = 32768  # 32GB
-  
-  validation {
-    condition     = var.postgresql_storage_mb >= 32768 && var.postgresql_storage_mb <= 65536
-    error_message = "O armazenamento deve estar entre 32GB e 64GB para economia."
-  }
-}
-
-variable "postgresql_backup_retention_days" {
-  description = "Dias de retenção de backup do PostgreSQL"
-  type        = number
-  default     = 7
-  
-  validation {
-    condition     = var.postgresql_backup_retention_days >= 7 && var.postgresql_backup_retention_days <= 14
-    error_message = "A retenção de backup deve estar entre 7 e 14 dias para economia."
-  }
-}
-
-variable "postgresql_database_name" {
-  description = "Nome do banco de dados principal"
+variable "acr_sku_name" {
+  description = "SKU do Container Registry (Basic, Standard, Premium)"
   type        = string
-  default     = "fastfood"
+  default     = "Basic"
+  
+  validation {
+    condition     = contains(["Basic", "Standard", "Premium"], var.acr_sku_name)
+    error_message = "SKU deve ser Basic, Standard ou Premium."
+  }
 }
+
+variable "acr_admin_enabled" {
+  description = "Habilitar admin user para o ACR"
+  type        = bool
+  default     = true
+}
+
+# ============================================
+# Azure Key Vault Variables
+# ============================================
+
+variable "keyvault_name" {
+  description = "Nome do Azure Key Vault"
+  type        = string
+  default     = "kv-fastfood-postech"
+  
+  validation {
+    condition     = can(regex("^[a-zA-Z]([a-zA-Z0-9-]){1,22}[a-zA-Z0-9]$", var.keyvault_name))
+    error_message = "O nome do Key Vault deve ter entre 3-24 caracteres, começar com letra, e conter apenas letras, números e hífens."
+  }
+}
+
+variable "keyvault_sku_name" {
+  description = "SKU do Key Vault (standard ou premium)"
+  type        = string
+  default     = "standard"
+  
+  validation {
+    condition     = contains(["standard", "premium"], var.keyvault_sku_name)
+    error_message = "SKU deve ser standard ou premium."
+  }
+}
+
+# ============================================
