@@ -44,12 +44,18 @@ resource "azurerm_key_vault_access_policy" "function_app" {
   secret_permissions = var.function_app_secret_permissions
 }
 
-# Exemplo de secret para connection string do banco
+# Aguarda para garantir disponibilidade do Key Vault
+resource "time_sleep" "wait_for_keyvault" {
+  depends_on      = [azurerm_key_vault.main]
+  create_duration = "30s"
+}
+
+# Secret para connection string do banco
 resource "azurerm_key_vault_secret" "database_connection" {
   count        = var.database_connection_string != null ? 1 : 0
   name         = "database-connection-string"
   value        = var.database_connection_string
   key_vault_id = azurerm_key_vault.main.id
   
-  depends_on = [azurerm_key_vault.main]
+  depends_on = [time_sleep.wait_for_keyvault]
 }

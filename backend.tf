@@ -1,6 +1,5 @@
 terraform { 
-  cloud { 
-    
+  cloud {    
     organization = "SoatElevenFiap" 
 
     workspaces { 
