@@ -162,11 +162,11 @@ module "acr" {
   location            = azurerm_resource_group.rg-postech.location
 
   # Configuração econômica
-  sku_name     = var.acr_sku_name
+  sku_name      = var.acr_sku_name
   admin_enabled = var.acr_admin_enabled
 
-  # Integração com AKS será configurada em uma segunda execução
-  # aks_principal_id = module.kubernetes.cluster_identity.principal_id
+  # Integração automática com AKS
+  aks_principal_id = module.kubernetes.cluster_identity.principal_id
 
   # Tags
   tags = merge(var.tags, {
@@ -176,7 +176,7 @@ module "acr" {
     Module      = "ACR"
   })
 
-  depends_on = [azurerm_resource_group.rg-postech]
+  depends_on = [azurerm_resource_group.rg-postech, module.kubernetes]
 }
 
 # Azure Key Vault Module

@@ -40,3 +40,8 @@ output "location" {
   description = "Localização do ACR"
   value       = azurerm_container_registry.main.location
 }
+
+output "aks_integration_status" {
+  description = "Status da integração AKS-ACR"
+  value = var.aks_principal_id != "" ? "✅ Integrado automaticamente via Terraform" : "⚠️  Não integrado - configure manualmente"
+}
