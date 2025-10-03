@@ -260,7 +260,7 @@ variable "app_gateway_backend_ips" {
 variable "acr_name" {
   description = "Nome do Azure Container Registry"
   type        = string
-  default     = "acrfastfoodpostech"
+  default     = "acrfastfoodpostech991"
   
   validation {
     condition     = can(regex("^[a-zA-Z0-9]{5,50}$", var.acr_name))
@@ -292,7 +292,7 @@ variable "acr_admin_enabled" {
 variable "keyvault_name" {
   description = "Nome do Azure Key Vault"
   type        = string
-  default     = "kv-fastfood-postech"
+  default     = "kv-fastfood-postechtstab"
   
   validation {
     condition     = can(regex("^[a-zA-Z]([a-zA-Z0-9-]){1,22}[a-zA-Z0-9]$", var.keyvault_name))

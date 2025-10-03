@@ -116,7 +116,7 @@ module "gateway" {
 
 # Storage Account para Azure Function
 resource "azurerm_storage_account" "function_storage" {
-  name                     = "stfastfoodfunction"
+  name                     = "stfastfoodfunctionadrtst"
   resource_group_name      = azurerm_resource_group.rg-postech.name
   location                = azurerm_resource_group.rg-postech.location
   account_tier             = "Standard"
@@ -133,7 +133,7 @@ resource "azurerm_storage_account" "function_storage" {
 #Azure Function Module
 module "auth_function" {
   source = "./modules/auth-function"
-  function_name = "fastfood-auth-function"
+  function_name = "fastfood-auth-functiontst001"
 
   storage_account_name       = azurerm_storage_account.function_storage.name
   storage_account_access_key = azurerm_storage_account.function_storage.primary_access_key
@@ -166,7 +166,9 @@ module "acr" {
   admin_enabled = var.acr_admin_enabled
 
   # Integração automática com AKS
-  aks_principal_id = module.kubernetes.cluster_identity.principal_id
+  # Deixe vazio na primeira execução para evitar dependência circular
+  # Execute terraform apply duas vezes para configurar a integração
+  aks_principal_id = null  # module.kubernetes.cluster_identity.principal_id
 
   # Tags
   tags = merge(var.tags, {
