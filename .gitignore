@@ -63,3 +63,4 @@ ehthumbs.db
 # Ignore lock files (uncomment if you want to ignore them)
 # .terraform.lock.hcl
 .terraform.lock.hcl
+/.vs
