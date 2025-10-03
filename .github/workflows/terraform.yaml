@@ -135,3 +135,59 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           TF_TOKEN_app_terraform_io: ${{ secrets.TFC_TOKEN }}
         run: terraform apply -auto-approve tfplan
+
+      # Passo 7 - Instalar AGIC addon no AKS
+      - name: Install AGIC Addon
+        run: |
+          # Obter informações do Terraform output
+          cd ${{ env.TF_WORKING_DIR }}
+          export ARM_USE_OIDC=true
+          export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+          export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+          export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          export TF_TOKEN_app_terraform_io=${{ secrets.TFC_TOKEN }}
+          
+          # Extrair valores do Terraform output
+          AKS_NAME=$(terraform output -raw aks_cluster_name)
+          RG_NAME=$(terraform output -raw resource_group_name)
+          APPGW_ID=$(terraform output -raw app_gateway_id)
+          
+          echo "AKS Cluster: $AKS_NAME"
+          echo "Resource Group: $RG_NAME" 
+          echo "Application Gateway ID: $APPGW_ID"
+          
+          # Habilitar o addon AGIC no AKS
+          az aks addon enable \
+            --name "$AKS_NAME" \
+            --resource-group "$RG_NAME" \
+            --addon ingress-appgw \
+            --appgw-id "$APPGW_ID"
+          
+          echo "AGIC addon instalado com sucesso!"
+
+      # Passo 8 - Verificar se o AGIC está funcionando
+      - name: Verify AGIC Installation
+        run: |
+          cd ${{ env.TF_WORKING_DIR }}
+          export ARM_USE_OIDC=true
+          export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+          export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+          export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          
+          # Obter credenciais do AKS
+          AKS_NAME=$(terraform output -raw aks_cluster_name)
+          RG_NAME=$(terraform output -raw resource_group_name)
+          
+          az aks get-credentials --resource-group "$RG_NAME" --name "$AKS_NAME" --overwrite-existing
+          
+          # Aguardar pods do AGIC ficarem prontos
+          echo "Aguardando pods do AGIC ficarem prontos..."
+          kubectl wait --for=condition=ready pod -l app=ingress-appgw -n kube-system --timeout=300s || true
+          
+          # Verificar status dos pods AGIC
+          echo "Status dos pods AGIC:"
+          kubectl get pods -n kube-system -l app=ingress-appgw
+          
+          # Verificar ingress existentes
+          echo "Ingress resources encontrados:"
+          kubectl get ingress -A
