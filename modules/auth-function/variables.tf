@@ -50,3 +50,12 @@ variable "location" {
   type        = string
 }
 
+variable "key_vault_id" {
+  description = "ID do Key Vault onde estão armazenado connection string do banco"
+  type        = string
+}
+
+variable "database_connection_secret_uri" {
+  description = "URI do segredo no Key Vault que contém a connection string do banco"
+  type        = string
+}

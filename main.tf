@@ -6,26 +6,6 @@ resource "azurerm_resource_group" "rg-postech" {
   tags = var.tags
 }
 
-# resource "azurerm_storage_account" "tfstate" {
-#   name                     = var.storage_account_name
-#   resource_group_name      = azurerm_resource_group.rg-postech.name
-#   location                 = azurerm_resource_group.rg-postech.location
-#   account_tier             = "Standard"
-#   account_replication_type = "LRS"
-
-#   tags = {
-#     Environment = "dev"
-#     Project     = "FastFood-System"
-#     CreatedBy   = "Terraform"
-#   }
-# }
-
-# resource "azurerm_storage_container" "tfstate" {
-#   name                  = var.terraform_storage_container_name
-#   storage_account_name  = azurerm_storage_account.tfstate.name
-#   container_access_type = "private"
-# }
-
 # Virtual Network Module
 module "vnet" {
   source = "./modules/vnet"
@@ -118,7 +98,7 @@ module "gateway" {
 resource "azurerm_storage_account" "function_storage" {
   name                     = "stfastfoodfunction"
   resource_group_name      = azurerm_resource_group.rg-postech.name
-  location                = azurerm_resource_group.rg-postech.location
+  location                 = azurerm_resource_group.rg-postech.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
@@ -132,7 +112,7 @@ resource "azurerm_storage_account" "function_storage" {
 
 #Azure Function Module
 module "auth_function" {
-  source = "./modules/auth-function"
+  source        = "./modules/auth-function"
   function_name = "fastfood-auth-function"
 
   storage_account_name       = azurerm_storage_account.function_storage.name
@@ -140,6 +120,9 @@ module "auth_function" {
 
   resource_group_name = azurerm_resource_group.rg-postech.name
   location            = azurerm_resource_group.rg-postech.location
+
+  database_connection_secret_uri = data.terraform_remote_state.database.outputs.database_secret_uri
+  key_vault_id                   = data.terraform_remote_state.database.outputs.key_vault_id
 
   # Tags
   tags = merge(var.tags, {
@@ -162,7 +145,7 @@ module "acr" {
   location            = azurerm_resource_group.rg-postech.location
 
   # Configuração econômica
-  sku_name     = var.acr_sku_name
+  sku_name      = var.acr_sku_name
   admin_enabled = var.acr_admin_enabled
 
   # Integração com AKS será configurada em uma segunda execução
@@ -180,30 +163,3 @@ module "acr" {
 }
 
 # Azure Key Vault Module
-module "keyvault" {
-  source = "./modules/keyvault"
-
-  # Configuração obrigatória
-  keyvault_name       = var.keyvault_name
-  resource_group_name = azurerm_resource_group.rg-postech.name
-  location            = azurerm_resource_group.rg-postech.location
-
-  # Configuração econômica
-  sku_name = var.keyvault_sku_name
-
-  # Configuração de acesso (integração opcional - será configurado após criação)
-  # function_app_principal_id = null  # Pode ser configurado depois
-
-  # Configuração de secret do banco de dados (será configurado manualmente)
-  # database_connection_string = null  # Será definido após criação do banco
-
-  # Tags
-  tags = merge(var.tags, {
-    Environment = var.environment
-    Project     = "FastFood-System"
-    CreatedBy   = "Terraform"
-    Module      = "KeyVault"
-  })
-
-  depends_on = [azurerm_resource_group.rg-postech]
-}

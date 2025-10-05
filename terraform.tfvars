@@ -5,7 +5,7 @@
 
 # Configurações do Resource Group
 resource_group_name = "rg-fastfood-postech"
-location            = "Canada Central"  # Região principal
+location            = "Canada Central" # Região principal
 
 # Tags para identificação de recursos
 tags = {
