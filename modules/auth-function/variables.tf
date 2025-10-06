@@ -59,3 +59,13 @@ variable "database_connection_secret_uri" {
   description = "URI do segredo no Key Vault que contém a connection string do banco"
   type        = string
 }
+
+variable "secret_key_secret_uri" {
+  description = "URI do segredo no Key Vault que contém a secret key"
+  type        = string  
+}
+
+variable "salt_key_secret_uri" {
+  description = "URI do segredo no Key Vault que contém a salt key"
+  type        = string  
+}

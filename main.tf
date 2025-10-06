@@ -121,8 +121,10 @@ module "auth_function" {
   resource_group_name = azurerm_resource_group.rg-postech.name
   location            = azurerm_resource_group.rg-postech.location
 
-  database_connection_secret_uri = data.terraform_remote_state.database.outputs.database_secret_uri
   key_vault_id                   = data.terraform_remote_state.database.outputs.key_vault_id
+  database_connection_secret_uri = data.terraform_remote_state.database.outputs.database_secret_uri
+  secret_key_secret_uri          = data.terraform_remote_state.database.outputs.secret_key_secret_uri
+  salt_key_secret_uri            = data.terraform_remote_state.database.outputs.salt_key_secret_uri
 
   # Tags
   tags = merge(var.tags, {

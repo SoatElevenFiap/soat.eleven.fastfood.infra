@@ -35,6 +35,8 @@ resource "azurerm_linux_function_app" "fastfood_auth_function" {
 
   app_settings = {
     "AZURE_SQL_CONNECTIONSTRING" = "@Microsoft.KeyVault(SecretUri=${var.database_connection_secret_uri})"
+    "SECRET_KEY_PASSWORD" = "@Microsoft.KeyVault(SecretUri=${var.secret_key_secret_uri})"
+    "SALT_KEY_PASSWORD" = "@Microsoft.KeyVault(SecretUri=${var.salt_key_secret_uri})"
   }
 
   tags = var.tags
