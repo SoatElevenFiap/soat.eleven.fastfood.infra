@@ -108,7 +108,7 @@ Após o deployment da infraestrutura:
 2. **Configurar secrets no Key Vault**:
    ```bash
    # Adicionar connection string do banco de dados
-   az keyvault secret set --vault-name kv-fastfood-postech --name "database-connection-string" --value "sua-connection-string"
+   az keyvault secret set --vault-name kv-fastfood-postech-ala-001 --name "database-connection-string" --value "sua-connection-string"
    ```
 
 3. **Configurar kubectl para AKS**:
