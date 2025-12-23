@@ -292,7 +292,7 @@ variable "acr_admin_enabled" {
 variable "keyvault_name" {
   description = "Nome do Azure Key Vault"
   type        = string
-  default     = "kv-fastfood-postech-ala-001"
+  default     = "kv-fastfood-postech-19"
   
   validation {
     condition     = can(regex("^[a-zA-Z]([a-zA-Z0-9-]){1,22}[a-zA-Z0-9]$", var.keyvault_name))
