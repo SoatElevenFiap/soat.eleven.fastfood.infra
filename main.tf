@@ -178,32 +178,3 @@ module "acr" {
 
   depends_on = [azurerm_resource_group.rg-postech]
 }
-
-# Azure Key Vault Module
-module "keyvault" {
-  source = "./modules/keyvault"
-
-  # Configuração obrigatória
-  keyvault_name       = var.keyvault_name
-  resource_group_name = azurerm_resource_group.rg-postech.name
-  location            = azurerm_resource_group.rg-postech.location
-
-  # Configuração econômica
-  sku_name = var.keyvault_sku_name
-
-  # Configuração de acesso (integração opcional - será configurado após criação)
-  # function_app_principal_id = null  # Pode ser configurado depois
-
-  # Configuração de secret do banco de dados (será configurado manualmente)
-  # database_connection_string = null  # Será definido após criação do banco
-
-  # Tags
-  tags = merge(var.tags, {
-    Environment = var.environment
-    Project     = "FastFood-System"
-    CreatedBy   = "Terraform"
-    Module      = "KeyVault"
-  })
-
-  depends_on = [azurerm_resource_group.rg-postech]
-}
