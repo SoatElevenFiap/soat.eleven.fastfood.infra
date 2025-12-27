@@ -171,11 +171,6 @@ output "infrastructure_summary" {
       login_server = module.acr.login_server
       id           = module.acr.acr_id
     }
-    keyvault = {
-      name = module.keyvault.keyvault_name
-      uri  = module.keyvault.keyvault_uri
-      id   = module.keyvault.keyvault_id
-    }
   }
 }
 
@@ -207,35 +202,5 @@ output "acr_admin_username" {
 output "acr_admin_password" {
   description = "Senha admin do ACR"
   value       = module.acr.admin_password
-  sensitive   = true
-}
-
-# ============================================
-# Azure Key Vault Outputs
-# ============================================
-
-output "keyvault_id" {
-  description = "ID do Azure Key Vault"
-  value       = module.keyvault.keyvault_id
-}
-
-output "keyvault_name" {
-  description = "Nome do Azure Key Vault"
-  value       = module.keyvault.keyvault_name
-}
-
-output "keyvault_uri" {
-  description = "URI do Azure Key Vault"
-  value       = module.keyvault.keyvault_uri
-}
-
-output "keyvault_tenant_id" {
-  description = "Tenant ID do Azure Key Vault"
-  value       = module.keyvault.tenant_id
-}
-
-output "database_secret_name" {
-  description = "Nome do secret da connection string do banco"
-  value       = module.keyvault.database_secret_name
   sensitive   = true
 }
