@@ -118,7 +118,7 @@ module "gateway" {
 resource "azurerm_storage_account" "function_storage" {
   name                     = "stfastfoodfunction"
   resource_group_name      = azurerm_resource_group.rg-postech.name
-  location                = azurerm_resource_group.rg-postech.location
+  location                 = azurerm_resource_group.rg-postech.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
@@ -132,7 +132,7 @@ resource "azurerm_storage_account" "function_storage" {
 
 #Azure Function Module
 module "auth_function" {
-  source = "./modules/auth-function"
+  source        = "./modules/auth-function"
   function_name = "fastfood-auth-function"
 
   storage_account_name       = azurerm_storage_account.function_storage.name
@@ -162,7 +162,7 @@ module "acr" {
   location            = azurerm_resource_group.rg-postech.location
 
   # Configuração econômica
-  sku_name     = var.acr_sku_name
+  sku_name      = var.acr_sku_name
   admin_enabled = var.acr_admin_enabled
 
   # Integração com AKS será configurada em uma segunda execução
@@ -178,3 +178,72 @@ module "acr" {
 
   depends_on = [azurerm_resource_group.rg-postech]
 }
+
+# Azure Key Vault Module
+module "keyvault" {
+  source = "./modules/keyvault"
+
+  # Configuração obrigatória
+  keyvault_name       = var.keyvault_name
+  resource_group_name = azurerm_resource_group.rg-postech.name
+  location            = azurerm_resource_group.rg-postech.location
+
+  # Configuração econômica
+  sku_name = var.keyvault_sku_name
+
+  # Configuração de acesso (integração opcional - será configurado após criação)
+  # function_app_principal_id = null  # Pode ser configurado depois
+
+  # Connection strings para armazenar no Key Vault
+  redis_connection_string = module.redis.primary_connection_string
+
+  # MongoDB connection string (baseado na configuração padrão do k8s secret)
+  # Formato: mongodb://username:password@mongodb.mongodb.svc.cluster.local:27017/database?authSource=admin
+  mongodb_connection_string = "mongodb://admin:FastFood2024!@mongodb.mongodb.svc.cluster.local:27017/${var.mongodb_database_name}?authSource=admin"
+
+  # Tags
+  tags = merge(var.tags, {
+    Environment = var.environment
+    Project     = "FastFood-System"
+    CreatedBy   = "Terraform"
+    Module      = "KeyVault"
+  })
+
+  depends_on = [azurerm_resource_group.rg-postech, module.redis]
+}
+
+# Azure Cache for Redis Module
+module "redis" {
+  source = "./modules/redis"
+
+  # Configuração obrigatória
+  redis_name          = var.redis_name
+  resource_group_name = azurerm_resource_group.rg-postech.name
+  location            = azurerm_resource_group.rg-postech.location
+
+  # Configuração econômica
+  capacity = var.redis_capacity
+  family   = var.redis_family
+  # enable_non_ssl_port foi removido - Redis sempre usa SSL/TLS nas versões recentes do provider
+  minimum_tls_version = var.redis_minimum_tls_version
+
+  # Integração com VNet (opcional - requer SKU Premium)
+  # subnet_id = module.vnet.db_subnet_id  # Descomentar se usar SKU Premium
+
+  # Firewall rule para subnet de aplicação
+  app_subnet_cidr = length(var.app_subnet_prefixes) > 0 ? var.app_subnet_prefixes[0] : null
+
+  # Tags
+  tags = merge(var.tags, {
+    Environment = var.environment
+    Project     = "FastFood-System"
+    CreatedBy   = "Terraform"
+    Module      = "Redis"
+  })
+
+  depends_on = [azurerm_resource_group.rg-postech, module.vnet]
+}
+
+# MongoDB será deployado como container no AKS para economia
+# Use o Helm chart ou manifestos Kubernetes após o deploy do AKS
+# Exemplo: kubectl apply -f k8s/mongodb-statefulset.yaml

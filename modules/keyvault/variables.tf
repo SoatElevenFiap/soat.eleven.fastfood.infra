@@ -112,6 +112,20 @@ variable "database_connection_string" {
   sensitive   = true
 }
 
+variable "redis_connection_string" {
+  description = "Connection string do Redis para armazenar no Key Vault"
+  type        = string
+  default     = null
+  sensitive   = true
+}
+
+variable "mongodb_connection_string" {
+  description = "Connection string do MongoDB para armazenar no Key Vault"
+  type        = string
+  default     = null
+  sensitive   = true
+}
+
 variable "tags" {
   description = "Tags para aplicar aos recursos"
   type        = map(string)

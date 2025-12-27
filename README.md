@@ -77,6 +77,8 @@ Este repositório provisiona os seguintes recursos na Azure:
 - ✅ **Azure Function** - Função serverless para autenticação
 - ✅ **Azure Container Registry (ACR)** - Registry privado para imagens Docker
 - ✅ **Azure Key Vault** - Gerenciamento seguro de secrets e chaves
+- ✅ **Azure Cache for Redis** - Cache distribuído para melhor performance
+- ✅ **MongoDB** - Banco de dados NoSQL deployado como container no AKS (solução econômica)
 
 ### Arquitetura de Rede
 - **App Subnet**: `10.0.1.0/24` - Para aplicações e AKS
@@ -90,6 +92,8 @@ Todos os recursos estão configurados com SKUs básicos para otimização de cus
 - **ACR**: SKU `Basic`
 - **Key Vault**: SKU `standard`
 - **Function App**: Plano de consumo `Y1`
+- **Redis**: SKU `C0` (250MB) - Basic/Standard
+- **MongoDB**: Container no AKS (sem custo adicional, usa recursos do cluster)
 
 ### Integração entre Serviços
 - **ACR ↔ AKS**: Integração para pull automático de imagens (configurado após deployment)
@@ -115,6 +119,21 @@ Após o deployment da infraestrutura:
    ```bash
    az aks get-credentials --resource-group rg-fastfood-postech --name aks-fastfood-postech
    ```
+
+4. **Deploy do MongoDB no AKS** (solução econômica):
+   ```bash
+   # Aplicar manifestos Kubernetes para MongoDB
+   kubectl apply -f k8s/mongodb-namespace.yaml
+   kubectl apply -f k8s/mongodb-configmap.yaml
+   kubectl apply -f k8s/mongodb-secret.yaml
+   kubectl apply -f k8s/mongodb-statefulset.yaml
+   kubectl apply -f k8s/mongodb-service.yaml
+   
+   # Verificar status
+   kubectl get pods -n mongodb
+   ```
+   
+   📖 **Mais detalhes**: Veja [`k8s/README.md`](k8s/README.md) para instruções completas de deploy e conexão.
 
 ## 📚 Referências e Documentação
 

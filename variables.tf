@@ -261,7 +261,7 @@ variable "acr_name" {
   description = "Nome do Azure Container Registry"
   type        = string
   default     = "acrfastfoodpostech"
-  
+
   validation {
     condition     = can(regex("^[a-zA-Z0-9]{5,50}$", var.acr_name))
     error_message = "O nome do ACR deve ter entre 5-50 caracteres alfanuméricos."
@@ -272,7 +272,7 @@ variable "acr_sku_name" {
   description = "SKU do Container Registry (Basic, Standard, Premium)"
   type        = string
   default     = "Basic"
-  
+
   validation {
     condition     = contains(["Basic", "Standard", "Premium"], var.acr_sku_name)
     error_message = "SKU deve ser Basic, Standard ou Premium."
@@ -293,7 +293,7 @@ variable "keyvault_name" {
   description = "Nome do Azure Key Vault"
   type        = string
   default     = "kv-fastfood-postech-19"
-  
+
   validation {
     condition     = can(regex("^[a-zA-Z]([a-zA-Z0-9-]){1,22}[a-zA-Z0-9]$", var.keyvault_name))
     error_message = "O nome do Key Vault deve ter entre 3-24 caracteres, começar com letra, e conter apenas letras, números e hífens."
@@ -304,10 +304,79 @@ variable "keyvault_sku_name" {
   description = "SKU do Key Vault (standard ou premium)"
   type        = string
   default     = "standard"
-  
+
   validation {
     condition     = contains(["standard", "premium"], var.keyvault_sku_name)
     error_message = "SKU deve ser standard ou premium."
+  }
+}
+
+# ============================================
+# Azure Cache for Redis Variables
+# ============================================
+
+variable "redis_name" {
+  description = "Nome do Azure Cache for Redis"
+  type        = string
+  default     = "redis-fastfood-postech"
+
+  validation {
+    condition     = can(regex("^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$", lower(var.redis_name))) && length(var.redis_name) >= 1 && length(var.redis_name) <= 63
+    error_message = "O nome do Redis deve ter entre 1-63 caracteres, apenas letras minúsculas, números e hífens (não pode começar ou terminar com hífen)."
+  }
+}
+
+variable "redis_capacity" {
+  description = "Capacidade do Redis Cache (0 = C0, 1 = C1, 2 = C2)"
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = contains([0, 1, 2], var.redis_capacity)
+    error_message = "Capacidade deve ser 0 (C0), 1 (C1) ou 2 (C2) para economia."
+  }
+}
+
+variable "redis_family" {
+  description = "Família do SKU do Redis (C = Basic/Standard, P = Premium)"
+  type        = string
+  default     = "C"
+
+  validation {
+    condition     = contains(["C", "P"], var.redis_family)
+    error_message = "Família deve ser C (Basic/Standard) ou P (Premium)."
+  }
+}
+
+variable "redis_enable_non_ssl_port" {
+  description = "Habilitar porta não-SSL do Redis (6379)"
+  type        = bool
+  default     = false
+}
+
+variable "redis_minimum_tls_version" {
+  description = "Versão mínima de TLS para Redis"
+  type        = string
+  default     = "1.2"
+
+  validation {
+    condition     = contains(["1.0", "1.1", "1.2"], var.redis_minimum_tls_version)
+    error_message = "Versão TLS deve ser 1.0, 1.1 ou 1.2."
+  }
+}
+
+# ============================================
+# MongoDB Variables (Container no AKS)
+# ============================================
+
+variable "mongodb_database_name" {
+  description = "Nome do banco de dados MongoDB (usado para referência, será criado no container)"
+  type        = string
+  default     = "fastfood"
+
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9_-]{1,255}$", var.mongodb_database_name))
+    error_message = "O nome do banco de dados deve ter entre 1-255 caracteres alfanuméricos, hífens ou underscores."
   }
 }
 

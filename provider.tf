@@ -16,6 +16,14 @@ terraform {
 }
 
 provider "azurerm" {
+  # Autenticação via Service Principal usando variáveis de ambiente
+  # Configure no Terraform Cloud:
+  # - ARM_CLIENT_ID
+  # - ARM_CLIENT_SECRET
+  # - ARM_SUBSCRIPTION_ID
+  # - ARM_TENANT_ID
+  # 
+  # Ou use Managed Identity se disponível no Terraform Cloud
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false

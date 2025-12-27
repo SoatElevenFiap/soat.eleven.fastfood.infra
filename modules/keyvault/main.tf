@@ -59,3 +59,23 @@ resource "azurerm_key_vault_secret" "database_connection" {
   
   depends_on = [time_sleep.wait_for_keyvault]
 }
+
+# Secret para connection string do Redis
+resource "azurerm_key_vault_secret" "redis_connection" {
+  count        = var.redis_connection_string != null ? 1 : 0
+  name         = "redis-connection-string"
+  value        = var.redis_connection_string
+  key_vault_id = azurerm_key_vault.main.id
+  
+  depends_on = [time_sleep.wait_for_keyvault]
+}
+
+# Secret para connection string do MongoDB
+resource "azurerm_key_vault_secret" "mongodb_connection" {
+  count        = var.mongodb_connection_string != null ? 1 : 0
+  name         = "mongodb-connection-string"
+  value        = var.mongodb_connection_string
+  key_vault_id = azurerm_key_vault.main.id
+  
+  depends_on = [time_sleep.wait_for_keyvault]
+}

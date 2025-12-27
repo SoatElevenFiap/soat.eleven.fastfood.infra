@@ -204,3 +204,106 @@ output "acr_admin_password" {
   value       = module.acr.admin_password
   sensitive   = true
 }
+
+# ============================================
+# Azure Key Vault Outputs
+# ============================================
+
+output "keyvault_id" {
+  description = "ID do Azure Key Vault"
+  value       = module.keyvault.keyvault_id
+}
+
+output "keyvault_name" {
+  description = "Nome do Azure Key Vault"
+  value       = module.keyvault.keyvault_name
+}
+
+output "keyvault_uri" {
+  description = "URI do Azure Key Vault"
+  value       = module.keyvault.keyvault_uri
+}
+
+output "keyvault_tenant_id" {
+  description = "Tenant ID do Azure Key Vault"
+  value       = module.keyvault.tenant_id
+}
+
+output "database_secret_name" {
+  description = "Nome do secret da connection string do banco"
+  value       = module.keyvault.database_secret_name
+  sensitive   = true
+}
+
+output "redis_secret_name" {
+  description = "Nome do secret da connection string do Redis no Key Vault"
+  value       = module.keyvault.redis_secret_name
+}
+
+output "redis_secret_id" {
+  description = "ID do secret da connection string do Redis no Key Vault"
+  value       = module.keyvault.redis_secret_id
+}
+
+output "mongodb_secret_name" {
+  description = "Nome do secret da connection string do MongoDB no Key Vault"
+  value       = module.keyvault.mongodb_secret_name
+}
+
+output "mongodb_secret_id" {
+  description = "ID do secret da connection string do MongoDB no Key Vault"
+  value       = module.keyvault.mongodb_secret_id
+}
+
+# ============================================
+# Azure Cache for Redis Outputs
+# ============================================
+
+output "redis_id" {
+  description = "ID do Azure Cache for Redis"
+  value       = module.redis.redis_id
+}
+
+output "redis_name" {
+  description = "Nome do Azure Cache for Redis"
+  value       = module.redis.redis_name
+}
+
+output "redis_hostname" {
+  description = "Hostname do Redis Cache"
+  value       = module.redis.hostname
+}
+
+output "redis_ssl_port" {
+  description = "Porta SSL do Redis (6380)"
+  value       = module.redis.ssl_port
+}
+
+output "redis_port" {
+  description = "Porta não-SSL do Redis (6379)"
+  value       = module.redis.port
+}
+
+output "redis_primary_connection_string" {
+  description = "Connection string primária do Redis"
+  value       = module.redis.primary_connection_string
+  sensitive   = true
+}
+
+# ============================================
+# MongoDB Outputs (Container no AKS)
+# ============================================
+
+output "mongodb_database_name" {
+  description = "Nome do banco de dados MongoDB (será criado no container)"
+  value       = var.mongodb_database_name
+}
+
+output "mongodb_info" {
+  description = "Informações sobre o MongoDB (deploy manual no AKS)"
+  value = {
+    note            = "MongoDB será deployado como container no AKS usando StatefulSet"
+    database_name   = var.mongodb_database_name
+    connection_info = "Após deploy do MongoDB no AKS, use o Service 'mongodb' na porta 27017"
+  }
+}

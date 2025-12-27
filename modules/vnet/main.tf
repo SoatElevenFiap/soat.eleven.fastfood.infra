@@ -76,6 +76,49 @@ resource "azurerm_network_security_group" "db_nsg" {
     destination_address_prefix = "*"
   }
 
+  # Permitir Redis da subnet de aplicação
+  security_rule {
+    name                       = "Allow-Redis-from-App"
+    priority                   = 1002
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "6379"
+    source_address_prefixes    = var.app_subnet_prefixes
+    destination_address_prefix = "*"
+  }
+
+  # Permitir Redis SSL da subnet de aplicação
+  security_rule {
+    name                       = "Allow-Redis-SSL-from-App"
+    priority                   = 1003
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "6380"
+    source_address_prefixes    = var.app_subnet_prefixes
+    destination_address_prefix = "*"
+  }
+
+  # Permitir MongoDB da subnet de aplicação
+  security_rule {
+    name                       = "Allow-MongoDB-from-App"
+    priority                   = 1004
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "27017"
+    source_address_prefixes    = var.app_subnet_prefixes
+    destination_address_prefix = "*"
+  }
+
+  # MongoDB está deployado no AKS, então não precisa de regra NSG específica
+  # O acesso ao MongoDB é feito via Service Kubernetes (ClusterIP) dentro do cluster
+  # Porta padrão MongoDB: 27017 (acesso interno ao cluster apenas)
+
   # Negar todo o resto
   security_rule {
     name                       = "Deny-All-Inbound"

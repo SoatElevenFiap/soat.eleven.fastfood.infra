@@ -38,3 +38,23 @@ output "database_secret_id" {
   description = "ID do secret da connection string do banco (se criado)"
   value       = var.database_connection_string != null ? azurerm_key_vault_secret.database_connection[0].id : null
 }
+
+output "redis_secret_name" {
+  description = "Nome do secret da connection string do Redis (se criado)"
+  value       = var.redis_connection_string != null ? azurerm_key_vault_secret.redis_connection[0].name : null
+}
+
+output "redis_secret_id" {
+  description = "ID do secret da connection string do Redis (se criado)"
+  value       = var.redis_connection_string != null ? azurerm_key_vault_secret.redis_connection[0].id : null
+}
+
+output "mongodb_secret_name" {
+  description = "Nome do secret da connection string do MongoDB (se criado)"
+  value       = var.mongodb_connection_string != null ? azurerm_key_vault_secret.mongodb_connection[0].name : null
+}
+
+output "mongodb_secret_id" {
+  description = "ID do secret da connection string do MongoDB (se criado)"
+  value       = var.mongodb_connection_string != null ? azurerm_key_vault_secret.mongodb_connection[0].id : null
+}
